@@ -63,13 +63,14 @@
 - 19 failed transactions, 0.008 ETH lost to gas on failed txs
 
 ### Minted: LOL
-- 33 NFTs they PAID to mint, then sold or transferred for less than 0.005 ETH (no payment found within ±48h)
-- Total spent minting: 2.78 ETH. Total received from selling: 0.00 ETH. Net loss: 2.78 ETH
-- Worst: 2x Eventually IF Physical Collectibles (0.18 ETH each → 0 ETH), EyesofFashionNFT (0.16 ETH → 0 ETH)
-- 10x On-Chain All-Stars (0.08 ETH each → 0 ETH, all minted Jul 23, 2025, dumped over following weeks)
-- 3x BUILDINGS // NYC (0.127 ETH each → 0 ETH, dumped same day Jun 2026)
-- 4 additional items were OTC deals (payment in separate tx) — excluded from LOL count
-- 33 additional free mints also dumped for dust
+- **Still holding the bag**: 130 NFTs across 96 collections with no transfer activity in 90+ days (78% of holdings are dead)
+- **Paid to mint, still holding, no market**: 4 NFTs across 3 collections — 0.34 ETH spent, current value ~0 ETH
+  - SlicesOfTIMECovers (1, paid 0.20 ETH, dead 1609 days)
+  - TOTEM (2, paid 0.08 ETH, dead 343 days)
+  - The Immutable Garden (1, paid 0.04 ETH, dead 278 days)
+- **Paid to mint, already dumped for 0 ETH**: 33 NFTs — 2.78 ETH spent, 0 ETH received (see skill pitfall #42 for OTC filtering)
+- **Free mints dumped for dust**: 33 additional NFTs minted for free, sold for <0.005 ETH
+- Total damage: 3.12 ETH spent minting, 0 ETH recovered on 66 NFTs, plus 130 NFTs still held in dead collections
 
 ### Most Flipped
 - CryptoFish (38 sold), DeadFellaz (38 sold), On-Chain All-Stars (28 sold)
