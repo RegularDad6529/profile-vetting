@@ -160,3 +160,16 @@ Every collector activity section must include:
 
 ### 30. Game mechanics can look like sales (2026-07-13)
 NFTs sent to 0x0 (burn address) are NOT sales — they may be game mechanics. death and taxes: citizens were burned and converted to evaders (1:1, same timestamp) — NOT sold. Always check: (a) is the destination 0x0? (b) is there a corresponding mint from 0x0 at the same timestamp? If yes → game mechanic, not sale. Exclude from "most flipped" lists.
+
+### 31. Drops API: author_handle param + wave.name field (2026-07-13)
+To find an artist's wave activity: `GET /drops?author_handle={handle}&limit=50` works. The `identity_id` param returns drops from OTHER people in waves the user is subscribed to (not their own posts). The `author_handle` param returns only the artist's own drops. The wave object has a `name` field (not `title`). Timestamps in `created_at` are epoch milliseconds (divide by 1000). Example: deeze had 10 posts across 7 waves, all from July 13 2026 — just started engaging.
+
+### 32. Matching ETH prices to NFT purchases/sales (2026-07-13)
+To find the ETH price of NFT purchases/sales, match by block number:
+- **Purchases**: ETH outgoing txs where `from = wallet` and `value > 0`, matched to NFT incoming txs where `to = wallet` in the same block
+- **Sales**: ETH incoming txs (regular `txlist` + internal `txlistinternal`) where `to = wallet` and `value > 0`, matched to NFT outgoing txs where `from = wallet` in the same block
+- Sort all matches by ETH value descending, take top 3 for each
+- Example: deeze's top purchase = Skulls of Luci #45 at 62 ETH (May 2023), top sale = Moonbirds #7237 at 38.56 ETH (Apr 2022)
+
+### 33. Linked wallets with separate 6529 profiles (2026-07-13)
+When discovering unconsolidated wallets via ENS subgraph, ALWAYS check each wallet for a 6529 profile via `GET /identities/{address}`. If a linked wallet has its own 6529 profile, include it in the assessment with: handle, level, classification, and relationship to the main profile. Do NOT speculate on identity links between profiles based on transactions alone (see pitfall #22). Example: blocknoob's original wallet (blocknoob.eth) has a separate profile @famous (Level 6) — included in assessment. ranagade.eth and lilblnde.eth (deeze's linked wallets) returned Level 0 profiles with no handle — noted but not prominent.
