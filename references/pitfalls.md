@@ -158,8 +158,14 @@ Every collector activity section must include:
 - **Top 3 most expensive sales**: NFT collection name, token ID, ETH price, date. Find these by checking ETH incoming paired with NFT outgoing transfers.
 - **Waves active in**: Check 6529 community waves for the artist's posts/submissions. Report which waves they participate in and post count. Key waves to check: maybe's dive bar, Meme Club, Seeking Nomination, and any profile wave.
 
-### 30. Game mechanics can look like sales (2026-07-13)
-NFTs sent to 0x0 (burn address) are NOT sales — they may be game mechanics. death and taxes: citizens were burned and converted to evaders (1:1, same timestamp) — NOT sold. Always check: (a) is the destination 0x0? (b) is there a corresponding mint from 0x0 at the same timestamp? If yes → game mechanic, not sale. Exclude from "most flipped" lists.
+### 30. Game mechanics can look like sales (2026-07-13, UPDATED)
+NFTs sent to 0x0 (burn address) are NOT sales — they may be game mechanics. death and taxes: citizens are burned and converted to evaders (1:1, same block) — NOT sold. Always check: (a) is the destination 0x0? (b) is there a corresponding mint from 0x0 in the same block? If yes → game mechanic, not sale. Exclude from "most flipped" lists. Also check: NFTs sent to a linked wallet (same ENS family) are transfers, not sales. gpebbles example: 128 citizens sent to gpebbleshooligans.eth wallet — transfer, not sale. Always identify the destination wallet's ENS name to determine if it's linked.
+
+### 30b. Report wallet age by FIRST ETH TX, not first NFT tx (2026-07-13)
+NFT transfer history may not start at wallet creation. gpebbles: first NFT tx was Feb 2026, but first ETH tx was Jan 2023 (BAYC purchase). Always use `GET /txlist?sort=asc&page=1&offset=1` to get the oldest transaction for true wallet age. Report per-wallet first tx dates when multiple wallets exist.
+
+### 30c. Mint breakdown must be specific (2026-07-13)
+"1,000+ mints from public contracts" is meaningless. Break down: (a) how many are game mechanics (DNT citizens→evaders), (b) how many are actual collecting mints, (c) list top 10 minted collections with counts. Verify ALL minted contract creators — if 0 contracts deployed by the wallet, ALL mints are from public contracts. Group mints by purpose (game mechanic vs collecting) not just total count.
 
 ### 31. Drops API author_handle filter is BROKEN — use activity API (2026-07-13, CORRECTED)
 The `author_handle` and `identity_id` params on `GET /drops` do NOT filter by author — they return global recent drops from random people. Do NOT use them to find an artist's wave posts.

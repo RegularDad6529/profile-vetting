@@ -3,20 +3,22 @@
 ## 6529 Community
 - Level 100 | Rep 9,866,960 | CIC 534,306 | TDH 23,984,376
 - PSEUDONYM
-- Wallet active since February 2026 (~5 months)
+- Wallet active since January 2023 (~3.5 years)
 - 0 MS wins, 0 prevote cards, not a wave creator
 
 ## Wallets (3, all in 6529 profile)
-- **gpebblesequilibrium.eth** (0x562acb18...) — TDH 5,557,589
-- **gpebbles.eth** (0x7d88f221...) — TDH 571,454 — also owns gpebble.eth, mrpebble.eth, mrpebbles.eth, ompebbles.eth, gpebblereserve.eth
-- **gpebbles6529ftw.eth** (0x86ae3785...) — TDH 16,390,159 — also owns gpebblesreserve.eth
+- **gpebbles6529ftw.eth** (0x86ae3785...) — first tx Jan 2023 (1,261 days) — TDH 16,390,159
+- **gpebbles.eth** (0x7d88f221...) — first tx Mar 2023 (1,214 days) — TDH 571,454 — also owns gpebble.eth, mrpebble.eth, mrpebbles.eth, ompebbles.eth, gpebblereserve.eth
+- **gpebblesequilibrium.eth** (0x562acb18...) — first tx Feb 2026 (153 days) — TDH 5,557,589
 
-No additional unconsolidated wallets found. All ENS names resolve to the 3 profile wallets.
+### Linked wallet (not in 6529 profile)
+- **gpebbleshooligans.eth / houligans.eth** (0xb3d6e43d...) — 6529 profile exists but no handle set (Level 7, auto-generated ID). Received 128 DNT citizens from gpebbles wallets.
+
+No other unconsolidated wallets found. All other ENS names resolve to the 3 profile wallets.
 
 ## Artist Work
 - 0 deployed contracts
 - 0 MS wins, 0 prevote cards
-- All 1,000+ mints from 0x0 are from public contracts created by others (verified contract creators for all minted collections — none created by gpebbles)
 - No artist output
 
 ## Wave Activity
@@ -39,44 +41,58 @@ No additional unconsolidated wallets found. All ENS names resolve to the 3 profi
 2. mfer #1845 — 0.45 ETH — Sep 26, 2025
 3. mfer #321 — 0.37 ETH — Sep 5, 2025
 
+### Mints from Public Contracts
+1,543 total mints across 62 collections — ALL from public contracts created by others (0 contracts deployed by gpebbles).
+
+**Death and Taxes game mechanic (1,115 mints, 72% of total):**
+- 533 citizens minted → 582 burned and converted to evaders (game mechanic, 501 matching blocks confirmed)
+- 128 citizens transferred to houligans wallet (linked wallet)
+- 582 evaders minted from burned citizens — all 582 still held
+- 3 citizens still held
+
+**Actual collecting mints (428 across 60 collections):**
+- Chapter 2: Pendulums (62), Lumens (55), CLOAKS (44)
+- NOKORI by Andrew Mitchell (24), Mirror Stages: Seed (23)
+- Statix (20), Many Worlds: The Photographer (20), BUILDINGS // NYC (20)
+- proxies (14), BRIGHT IDEA PROJECT 39 (12), Mirrored.2 (10)
+- Bears by noper (10), Conversation Starters (9), burds (8)
+- Plus 46 more collections with 1-6 mints each
+
 ### Notable collections (by net held)
-- death and taxes: evaders (610 held, 582 minted, 0 sold)
-- death and taxes: citizens (585 held, 533 minted, 136 sold — heavy flipping)
-- Lumens (67 held, 55 minted)
-- CLOAKS (44 held, 44 minted)
-- NextGen 6529 (68 held, 3 minted)
-- NOKORI by Andrew Mitchell (24 held, 24 minted)
-- Mirror Stages: Seed (23 held, 23 minted)
-- Chapter 2: Pendulums (72 held, 62 minted)
-- BRAINROT (22), Statix (20), Many Worlds (20), BUILDINGS // NYC (20)
-- SuperRareV2 (30 held — real SuperRare, verified contract 0xB932a70A)
-- BoredApeYachtClub (1 held)
+- death and taxes: evaders (582 held — all from game mechanic)
+- NextGen 6529 (68 held, 3 minted, 65 received)
+- Lumens (67), Chapter 2: Pendulums (72)
+- CLOAKS (44), SuperRareV2 (30 — real, verified contract 0xB932a70A)
+- NOKORI (24), Mirror Stages (23), BRAINROT (22)
+- Statix (20), Many Worlds (20), BUILDINGS // NYC (20)
+- Nakamigos (18), Locked In (18), Pepe Nation (13), RENGA (13)
 - 6529 Gradient (6), Formosa 6529 (2), Karen Army (1), Rare Memes (1)
+- BoredApeYachtClub (1 — purchased at 55 ETH)
+- Zero SuperRarer/Chonkly exposure
 
 ### Foundation
-- 0 bought, 0 sold, 0 held — no Foundation activity
+- Zero activity
 
-### Most flipped
-- death and taxes: citizens (136 sold), Outlaws (101 sold)
-- Tubby Cats (40 sold), Nakamigos (34 sold)
-- egg (12 sold), PudgyPenguins (7 sold), Milady (6 sold)
+### Most flipped (actual sales, not game mechanics)
+- Outlaws (101 sold), Tubby Cats (40 sold), Nakamigos (34 sold)
+- egg (12 sold), PudgyPenguins (7 sold), Milady (6 sold), mfer (5 sold)
 
 ### 6529 ecosystem
 - NextGen 6529 (68), 6529 Gradient (6), Formosa 6529 (2), Karen Army (1), Rare Memes (1)
 
 ### Art / established
-- SuperRareV2 (30 — real SuperRare, verified)
+- SuperRareV2 (30 — real, verified)
 - Art Blocks Studio | 7 (6)
 - BoredApeYachtClub (1)
-- Zero SuperRarer/Chonkly exposure
 
 ## On-Chain Notes
 - 0 deployed contracts — not a contract creator
-- Very active free/public mint collector (1,000+ mints from public contracts)
-- Heavy flipper on death and taxes: citizens (136 sold) and Outlaws (101 sold)
-- Wallet only active since Feb 2026 — very new but extremely active
-- 30 real SuperRare tokens held — significant established art collector
+- DNT game mechanic dominates activity: 1,115 of 1,543 mints are citizens→evaders conversions
+- 128 citizens transferred to linked houligans wallet (gpebbleshooligans.eth) — not sales
+- 428 actual collecting mints across 60 public collections
+- 30 real SuperRare tokens — significant established art collector
 - BAYC holder (bought at 55 ETH)
+- Very active on 6529 platform (215/365 days) despite no MS wins
 - No wash trading or suspicious patterns
 - Zero exposure to unindexed/knockoff platforms
 
