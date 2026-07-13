@@ -10,9 +10,9 @@
 - memes.regulardad.eth (0x4220132c...) — TDH 493,864 — primary minting wallet
 - regulardad.eth (0x7b5af679...) — TDH 47,409 — primary address (delegation hub)
 - safe.regulardad.eth (0xd0b53c87...) — TDH 4,585,014 — holds bulk of TDH
-- hot.regulardad.eth (0xbe3471f8...) — delegated wallet, @Hot (Level 0, TDH 0)
-- 0xc56737... — delegated (use_case 998, custom)
-- 0xba09984... — delegated (use_case 998, custom), deployed 2 contracts (Aug 2023)
+- hot.regulardad.eth (0xbe3471f8...) — delegated wallet (use_case 2), @Hot (Level 0, TDH 0)
+- 0xc5673724169bb3b275895247d1cbff0102429811 — delegated (use_case 998, custom)
+- 0xba09984de1c87d27fc8815f053515aa1c666d2ce — delegated (use_case 998, custom)
 - Wallet active since May 2022 (~4.2 years)
 
 ### Delegation Graph
@@ -21,8 +21,14 @@
 - regulardad.eth → delegates TO safe.regulardad.eth (consolidation)
 - safe.regulardad.eth → delegates TO 0xc56737... and 0xba09984... (custom use case 998)
 
+### How Delegated Wallets Were Found
+- Queried `GET /api/delegations/{wallet}` for each of the 3 profile wallets
+- 0xc56737... and 0xba09984... appeared as to_address from safe.regulardad.eth with use_case 998
+- hot.regulardad.eth appeared as from_address delegating to memes.regulardad.eth with use_case 2
+
 ## Artist Work
-- 2 deployed contracts (from 0xba09984..., Aug 2023)
+- 1 deployed NFT contract: Regular Dad Memes (RD, ERC-1155) at 0x70e51593d4a62198f301d3ba96856439348cb587 — deployed Aug 12, 2023 via 0xba09984...
+- 1 other contract deployed (not a token): 0xb140c1965168f5cad840cf45a2d658ce96850393 — Aug 6, 2023 via 0xba09984...
 - Active MS submission
 - Wave Creator
 
@@ -34,6 +40,7 @@
 ## Collector Activity
 - 1,221 NFT transfers, 382 held, 218 collections
 - 332 mints, 170 sold, 12 burns
+- 149 NFTs sent out with no ETH received (transfers, not sales)
 
 **Top 3 Purchases:**
 1. CryptoDickbutts S3 #4836 — 1.50 ETH — Jun 2022
@@ -41,15 +48,16 @@
 3. beef brothko #21 — 0.59 ETH — Feb 2025
 
 **Top 3 Sales:**
-1. Good Vibes Club #2838 — 0.82 ETH — Jun 2025 (minted for free, +0.82 ETH)
-2. Good Vibes Club #2837 — 0.58 ETH — May 2025 (minted for free, +0.58 ETH)
+1. Good Vibes Club #2838 — 0.82 ETH — Jun 2025 (minted free, +0.82 ETH)
+2. Good Vibes Club #2837 — 0.58 ETH — May 2025 (minted free, +0.58 ETH)
 3. mfer #1258 — 0.40 ETH — Oct 2025
 
 ### The Biggest L
-- BUILDINGS // NYC #785: bought 0.048 ETH → sold 0.013 ETH = -0.035 ETH
+- BUILDINGS // NYC #785: bought 0.0477 ETH → sold 0.0129 ETH = -0.035 ETH
+  (minted via marketplace, sold via Seaport internal tx — both legs verified)
 - On-Chain All-Stars #1199: 0.060 ETH → 0.028 ETH = -0.032 ETH
 - On-Chain All-Stars #1200: 0.060 ETH → 0.028 ETH = -0.032 ETH
-- Losses are small — conservative trader, no big Ls
+- Losses are small — conservative trader, biggest L is 0.035 ETH (~$100)
 
 ### Biggest Wins
 - Good Vibes Club #2838: minted free → sold 0.82 ETH = +0.82 ETH
@@ -80,23 +88,31 @@
 ### Most Flipped
 - Karen Army (81 sold), dwellers (27 sold), BRAINROT (4), On-Chain All-Stars (3)
 
-**Foundation:** 0 held
+**Foundation:** 0 transfers (never used or post-shutdown not indexed)
 **SuperRare:** 0 held
 
 ## 6529 Ecosystem
-- Regulars (13 held), Seize And Share (13 held), dwellers (14 held)
+- dwellers (14 held), Seize And Share (13 held), Regulars (13 held)
 - Regular Dad: This Is Me (9 held), Karen Army (5 held)
 - The Manager's Complaint Report (3 held), Community Member Memes (2 held)
 - Regular Jobs (2 held), Meme Open Edition (2 held), NextGen 6529 (2 held)
 - Jake Memes (1), Gray Guard of Memes (1), 6529 Holiday Cards (1), Sandscapes (1)
 - TDH 6,103,664 — major 6529 network presence
 
+## Notable Non-6529 Holdings
+- CUBIQUE (16), Mfers BoringPunks (10), DANKBOTS (9), On-Chain All-Stars (9)
+- Art Blocks (7), ENS (6), Pixelinme (6), nakafakas (5), Mfer Ringers (5)
+- NUCLEAR SAMURAI (5), BRAINROT (5), fine art mfers (4), fake rare mfers (4)
+- Decal series (multiple artists), XCOPY works, KnownOrigin, MakersPlace
+- Broad collector across many ecosystems — not exclusively 6529
+
 ## On-Chain Notes
-- Very conservative trader — biggest L is only -0.035 ETH
+- Very conservative trader — biggest L is 0.035 ETH (~$100)
 - Good Vibes Club flips were excellent (free mint → 0.82 ETH)
-- 95% of held collections are dead — but mostly small free mints, not big paid positions
-- DANKBOTS is the main bag (0.70 ETH paid, dead 4 years)
+- 95% of held collections are dead — but mostly small positions
+- DANKBOTS is the main bag (0.70 ETH paid, dead 4 years, still holding 9)
 - Karen Army is the most flipped collection (81 sold) — active ecosystem participant
-- 2 deployed contracts via delegated wallet 0xba09984...
-- No Foundation, no SuperRare — pure 6529 ecosystem
+- Regular Dad Memes (RD) ERC-1155 contract deployed via delegated wallet
+- No Foundation activity, no SuperRare held
+- 149 NFT transfers with no ETH received (gifting/airdrops, not sales)
 - Extremely active on waves (347/365 days, 3,896 drops)
