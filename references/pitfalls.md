@@ -164,8 +164,8 @@ NFTs sent to 0x0 (burn address) are NOT sales — they may be game mechanics. de
 ### 30b. Report wallet age by FIRST ETH TX, not first NFT tx (2026-07-13)
 NFT transfer history may not start at wallet creation. gpebbles: first NFT tx was Feb 2026, but first ETH tx was Jan 2023 (BAYC purchase). Always use `GET /txlist?sort=asc&page=1&offset=1` to get the oldest transaction for true wallet age. Report per-wallet first tx dates when multiple wallets exist.
 
-### 30c. Mint breakdown must be specific (2026-07-13)
-"1,000+ mints from public contracts" is meaningless. Break down: (a) how many are game mechanics (DNT citizens→evaders), (b) how many are actual collecting mints, (c) list top 10 minted collections with counts. Verify ALL minted contract creators — if 0 contracts deployed by the wallet, ALL mints are from public contracts. Group mints by purpose (game mechanic vs collecting) not just total count.
+### 30c. Mint breakdown must be specific (2026-07-13, UPDATED)
+"1,000+ mints from public contracts" is meaningless. Break down: (a) how many are game mechanics (DNT citizens→evaders), (b) how many are actual collecting mints, (c) list top 10 minted collections with counts. Verify ALL minted contract creators — if 0 contracts deployed by the wallet, ALL mints are from public contracts. Group mints by purpose (game mechanic vs collecting) not just total count. **Include artist names where possible** — look up the collection creator and identify the artist behind each notable collection (e.g. "NOKORI by Andrew Mitchell" not just "NOKORI", "Bears by noper" not just "Bears"). For collections that already include the artist name in the title, keep it. For others, check the contract creator's ENS name or look up the collection on OpenSea/Foundation to find the artist.
 
 ### 31. Drops API author_handle filter is BROKEN — use activity API (2026-07-13, CORRECTED)
 The `author_handle` and `identity_id` params on `GET /drops` do NOT filter by author — they return global recent drops from random people. Do NOT use them to find an artist's wave posts.
@@ -183,3 +183,12 @@ To find the ETH price of NFT purchases/sales, match by block number:
 
 ### 33. Linked wallets with separate 6529 profiles (2026-07-13)
 When discovering unconsolidated wallets via ENS subgraph, ALWAYS check each wallet for a 6529 profile via `GET /identities/{address}`. If a linked wallet has its own 6529 profile, include it in the assessment with: handle, level, classification, and relationship to the main profile. Do NOT speculate on identity links between profiles based on transactions alone (see pitfall #22). Example: blocknoob's original wallet (blocknoob.eth) has a separate profile @famous (Level 6) — included in assessment. ranagade.eth and lilblnde.eth (deeze's linked wallets) returned Level 0 profiles with no handle — noted but not prominent.
+
+### 34. ENS subgraph may miss wallets — search by ENS name directly (2026-07-13)
+The ENS subgraph query `{ domains(where: {owner: "<wallet>"}) }` only finds ENS names OWNED by a wallet. It will NOT find a wallet that owns an ENS name if you don't already know that wallet exists. amtwo.eth was owned by 0xa1697786... (the oldest and most active wallet, Dec 2021) but was NOT found via the subgraph because none of the 2 profile wallets owned amtwo.eth. Solution: if the handle matches an ENS name pattern (e.g., `amtwo` → `amtwo.eth`), query the subgraph by name: `{ domains(where: {name: "amtwo.eth"}) { owner { id } resolvedAddress { id } } }` to find the owning wallet. Always do a name-based lookup in addition to the owner-based lookup.
+
+### 35. Always produce a clean/feedback version for sharing (2026-07-13)
+RD asks for a "clean version to share" after reviewing the internal assessment. The clean version: no raw contract addresses, no internal on-chain analysis details, no "pitfall #X" references, no framework terminology. Save as `references/{handle}-feedback.md`. The internal assessment stays as `references/{handle}.md`. Produce both proactively — don't wait for RD to ask.
+
+### 36. Free mint farming: single-day burst pattern (2026-07-13)
+Some wallets mint hundreds of NFTs from a single public contract on a single day at zero cost. amtwo: 200 BitmapPunks mints on Jan 1, 2025, all free (0 ETH spent). This is the largest holding by count but has zero financial value. When a single collection dominates holdings by count but was entirely free-minted, call it out explicitly as "free mint farm" and exclude from the notable collections assessment. The mint breakdown section (pitfall #30c) should separate these from actual collecting mints.
