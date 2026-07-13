@@ -642,10 +642,11 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 - Fetch ALL transaction pages (Blockscout paginates at 100/page)
 - Never report gross incoming ETH as headline — only marketplace revenue
 - Separate artist sales from collector resales on Foundation
-- Find unconsolidated wallets via ENS subgraph (6529 caps at 3 wallets per profile)
+- Find unconsolidated wallets via ENS subgraph (6529 caps at 3 wallets per profile) — see `references/ens-subgraph-wallet-discovery.md` for full workflow and examples
 - Never report gross marketplace payout as artist revenue — check if wallet MINTED any NFTs from 0x0 first
 - Marketplace flow is bidirectional — always report NET (payouts received minus ETH sent to marketplace). Gross payout alone is misleading. blocknoob example: 191K ETH received from Foundation but 270K ETH sent TO Foundation — net -79K ETH (net buyer, not net seller)
 - Foundation bid escrow inflates gross flows — ETH is locked when bidding and returned if outbid. Never show gross ETH figures for Foundation. Only show NFT counts (bought/sold/held) and net position
+- Minting from a contract ≠ creating the contract. Check who DEPLOYED the contract, not just who minted from 0x0. david example: minted 172 "death and taxes" NFTs from 0x0 but the contract was created by a separate factory (0x3b3B425b...) — he's a collector, not the artist. Always verify contract creator address via Blockscout v2 addresses API (creator_address_hash field).
 - Collector collection selection: be comprehensive — total counts, notable by volume OR significance, 6529 ecosystem separately, established art platforms, any collection with >10 transfers
 - SuperRarer (Chonkly) ≠ SuperRare — always verify contract addresses
 - Social links = neutral data, no judgmental language about rep
