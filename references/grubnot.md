@@ -63,11 +63,12 @@
 - 19 failed transactions, 0.008 ETH lost to gas on failed txs
 
 ### Minted: LOL
-- 37 NFTs they PAID to mint, then sold for less than 0.005 ETH
-- Total spent minting: 3.33 ETH. Total received from selling: 0.00 ETH. Net loss: 3.33 ETH
-- Worst: Invisible Friends #3826 (paid 0.25 ETH → sold for 0 ETH)
-- Also: 2x Eventually IF Physical Collectibles (0.18 ETH each → 0 ETH), 2x EyesofFashionNFT (0.16 ETH each → 0 ETH)
+- 33 NFTs they PAID to mint, then sold or transferred for less than 0.005 ETH (no payment found within ±48h)
+- Total spent minting: 2.78 ETH. Total received from selling: 0.00 ETH. Net loss: 2.78 ETH
+- Worst: 2x Eventually IF Physical Collectibles (0.18 ETH each → 0 ETH), EyesofFashionNFT (0.16 ETH → 0 ETH)
+- 10x On-Chain All-Stars (0.08 ETH each → 0 ETH, all minted Jul 23, 2025, dumped over following weeks)
 - 3x BUILDINGS // NYC (0.127 ETH each → 0 ETH, dumped same day Jun 2026)
+- 4 additional items were OTC deals (payment in separate tx) — excluded from LOL count
 - 33 additional free mints also dumped for dust
 
 ### Most Flipped
