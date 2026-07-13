@@ -86,19 +86,19 @@
 - 269 of 280 collections held are dead (96% — no transfer activity in 90+ days)
 - 1,291 NFTs in dead collections
 - 78 collections they PAID to mint, still holding, dead 180+ days — **28.94 ETH spent**
-- Worst: Art Blocks (19 held across 14 projects, paid 4.72 ETH — contract alive but tokens unmoved 1100+ days)
-  - Fidenza by Tyler Hobbs (2 held, unmoved 1147 days)
-  - Physical Painting by Dmitri Cherniak (1 held, unmoved 1844 days)
-  - Cold Construction by Tyler Hobbs (2 held, unmoved 1577 days)
-  - Genesis by Dmitri Cherniak (1 held, unmoved 1821 days)
-  - Fragments by aaronpenne (1 held, unmoved 1590 days)
-  - Synapses by Yazid (2 held, unmoved 1821 days)
-  - Plus 8 more projects
-- TinyBoxes (18 held, paid 1.60 ETH, dead 1518 days)
-- Savage Droids (16 held, paid 1.58 ETH, dead 1660 days)
-- LordsOfLightPacks (27 held, paid 1.15 ETH, dead 1722 days)
-- VeeFriends (2 held, paid 1.00 ETH, dead 1859 days)
-- Goofy Oversized Optics People (30 held, paid 0.92 ETH, dead 1521 days)
+- Worst: Art Blocks (19 held across 14 projects, paid 4.72 ETH — tokens unmoved 1100+ days, but platform and many projects are actively traded)
+  - Fidenza by Tyler Hobbs (2 held) — actively traded on secondary, blocknoob just hasn't sold
+  - Physical Painting by Dmitri Cherniak (1 held) — established project
+  - Cold Construction by Tyler Hobbs (2 held)
+  - Genesis by Dmitri Cherniak (1 held)
+  - Fragments by aaronpenne (1 held)
+  - Synapses by Yazid (2 held)
+  - Plus 8 more projects (Elementals, Broken Planes, Pace Layers, Algorithms Studying Art, Scribbled Boundaries, Script Theory, Memories of Qubit, Geometries in Motion)
+- TinyBoxes (18 held, paid 1.60 ETH, dead 1518 days) — genuinely dead
+- Savage Droids (16 held, paid 1.58 ETH, dead 1660 days) — genuinely dead
+- LordsOfLightPacks (27 held, paid 1.15 ETH, dead 1722 days) — genuinely dead
+- VeeFriends (2 held, paid 1.00 ETH, dead 1859 days) — VeeFriends still has some activity
+- Goofy Oversized Optics People (30 held, paid 0.92 ETH, dead 1521 days) — likely dead
 
 **Part B — Already dumped for dust:**
 - 5 paid-mint NFTs sold for ~0 ETH — 0.08 ETH spent, 0 ETH received
