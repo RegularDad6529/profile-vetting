@@ -53,16 +53,17 @@
 3. mfer #1258 — 0.40 ETH — Oct 2025
 
 ### The Biggest L
-- BUILDINGS // NYC #785: bought 0.0477 ETH → sold 0.0129 ETH = -0.035 ETH
-  (minted via marketplace, sold via Seaport internal tx — both legs verified)
-- On-Chain All-Stars #1199: 0.060 ETH → 0.028 ETH = -0.032 ETH
-- On-Chain All-Stars #1200: 0.060 ETH → 0.028 ETH = -0.032 ETH
-- Losses are small — conservative trader, biggest L is 0.035 ETH (~$100)
+- On-Chain All-Stars #1199: minted 0.020 ETH → sold 0.014 ETH = -0.006 ETH
+- On-Chain All-Stars #1200: minted 0.020 ETH → sold 0.014 ETH = -0.006 ETH
+- BUILDINGS // NYC #785: minted 0.016 ETH → sold 0.013 ETH = -0.003 ETH
+- Losses are tiny — conservative trader, biggest L is 0.006 ETH
 
 ### Biggest Wins
+- gristle buddeez #1861: minted 0.047 ETH → sold 0.27 ETH = +0.23 ETH
+- gristle buddeez #1859: minted 0.047 ETH → sold 0.27 ETH = +0.22 ETH
+- No Bad Trippers #1307: minted 0.034 ETH → sold 0.13 ETH = +0.10 ETH
 - Good Vibes Club #2838: minted free → sold 0.82 ETH = +0.82 ETH
 - Good Vibes Club #2837: minted free → sold 0.58 ETH = +0.58 ETH
-- gristle buddeez #1861: bought 0.14 ETH → sold 0.27 ETH = +0.13 ETH
 
 ### Failure to Transact
 - 15 failed transactions, 0.032 ETH lost to gas on failed txs

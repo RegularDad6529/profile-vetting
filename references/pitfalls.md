@@ -118,10 +118,17 @@ Profile wave drops can be fetched via `GET /waves/{profile_wave_id}/drops` to se
 
 ## Key 6529 API Endpoints
 - `GET /identities/{handle}` — profile with artist fields, wallets, rep
+- `GET /identities/{handle}/activity` — 365-day daily drop count array (pitfall #31)
+- `GET /delegations/{wallet}` — all delegations for a wallet (PATH param, not query — pitfall #33b). Use cases: 1=primary, 2=sub-delegation, 3=consolidation, 998=custom
 - `GET /drops/{id}` — individual drop details (title, author, ratings, winning_context)
 - `GET /drops?drop_type=PREVOTE` — prevote card drops
-- `GET /waves/{wave_id}/drops` — drops on a specific wave
+- `GET /waves/{wave_id}/drops` — drops on a specific wave (returns ALL drops incl replies — more than `/drops?wave_id=`)
 - `GET /profiles/{id}/rep/categories` — rep breakdown by category
+
+### 6529 Backend Source Code
+- GitHub: `6529-Collections/6529seize-backend` (TypeScript, open source)
+- Delegation routes: `src/api-serverless/src/delegations/delegations.routes.ts` — `GET /:wallet` and `GET /minting/:wallet`
+- Delegation contract: `6529-Collections/nftdelegation` (Solidity)
 
 ### 20. Burns (to 0x0) are NOT sales (2026-07-13)
 NFTs sent to 0x0000000000000000000000000000000000000000 are burned/destroyed, not sold. Always check the recipient address before classifying a transfer as a sale. Game mechanics (e.g., death and taxes: burn citizen → mint evader at same timestamp) produce burn+mint pairs that look like sales if you only count outgoing transfers. Cross-check: if NFTs go to 0x0, check whether new NFTs were minted to the same wallet at the same timestamp — that's a game mechanic, not a flip. Example: david's death and taxes: citizens — 85 burned to 0x0, 85 evaders minted at matching timestamps. NOT sales.
@@ -213,6 +220,12 @@ In the collector activity section, include a line for SuperRare (NOT "SuperRarer
 ### 39. Don't contradict TDH with ecosystem assessment (2026-07-13)
 If a profile has significant TDH (e.g. grubnot at 1.84M TDH), do NOT say "minimal 6529 ecosystem engagement" just because they hold few 6529-specific NFTs. TDH reflects broader network activity — a high-TDH holder is deeply engaged in the 6529 ecosystem even with minimal Gradient/NextGen holdings. Report what they hold factually (e.g. "3 ecosystem items: 6529er Collection, Karen Army, 6529Complaints") and let the TDH number speak for itself.
 
+### 39b. Don't label collectors as "pure" anything (2026-07-13)
+Never say "pure 6529 ecosystem" or "exclusively X" — collectors hold broadly across many ecosystems. RD holds CUBIQUE, mfers variants, Art Blocks, DANKBOTS, Decal series, XCOPY works, KnownOrigin, MakersPlace, and many others alongside 6529 items. Report ecosystem holdings factually in their own section, and list notable non-ecosystem holdings separately. Let the reader draw conclusions.
+
+### 39c. Ecosystem keyword matching is too broad — Regulars are NOT 6529 ecosystem (2026-07-13)
+The keyword list for 6529 ecosystem matching (`['6529', 'meme', 'karen', 'gradient', 'nextgen', 'seize', 'seizer', 'dweller', 'complaint', 'regular']`) is too broad. "Regular" matches "Regulars", "Regular Dad: This Is Me", and "Regular Jobs" — these are NOT 6529 ecosystem collections. They are community/personal collections. Only count as 6529 ecosystem: 6529 Gradient, NextGen 6529, Karen Army, dwellers, 6529er Collection, The Memes, Seize And Share, SeizerDAO, 6529Complaints, Meme Open Edition, Jake Memes, Gray Guard of Memes, 6529 Holiday Cards, Sandscapes cc0 Specials, Community Member Memes. Remove "regular" and "meme" as standalone keywords — only match specific 6529 collection names. When in doubt, check if the collection is deployed by the 6529 team or on the 6529 platform.
+
 ### 40. The Biggest L — worst NFT trade by P&L (2026-07-13)
 Every collector activity section must include "The Biggest L": the single NFT trade where the wallet lost the most ETH. Calculate by matching buy price (ETH out + NFT in, same block) and sell price (ETH in + NFT out, same block) for the same (contract, tokenID). P&L = sell_price - buy_price. Report the biggest loss with: collection name, token ID, buy price, sell price, P&L, and dates. Example: grubnot's biggest L = CryptoFish #733, bought 1.04 ETH → sold 0.07 ETH = -0.97 ETH. Also note if one collection dominates the losses.
 
@@ -227,3 +240,19 @@ Every assessment must include "Minted: LOL" with two parts:
 **Part B — Already dumped for dust**: NFTs that were minted (from 0x0, including paid mints) and later sold for <0.005 ETH. For each candidate: (1) check mint_cost (ETH paid in same block as mint), (2) check for OTC payments within ±48h from the NFT recipient to the wallet, (3) only count as LOL if NO OTC payment found. Report paid-mint LOLs and free-mint LOLs separately, total ETH spent, total received.
 
 Example: grubnot holds 130 NFTs across 96 dead collections (78% of holdings). 4 NFTs they paid 0.34 ETH to mint are in dead collections (SlicesOfTIMECovers dead 1609 days). Additionally, 33 paid-mint NFTs were dumped for 0 ETH (2.78 ETH lost), and 33 free mints dumped for dust.
+
+### 43. NFTs sent out with no ETH received = transfers, not sales (2026-07-13)
+When calculating P&L and sales, distinguish between actual sales (ETH received) and transfers/gifts (no ETH). For each outgoing NFT transfer, check: (a) ETH incoming in the same block (regular + internal txs), (b) OTC payment from recipient within ±48h. If NO ETH found → it's a transfer/gift/airdrop, NOT a sale. Do not count it in P&L calculations or "most flipped" lists. RD had 149 NFTs sent out with zero ETH received — these are gifts/transfers, not sales. Report the count separately so the reader understands the difference between sales and transfers.
+
+### 44. ETH amounts are in ETH, not USD — don't confuse units (2026-07-13)
+When reporting P&L losses, state the ETH amount clearly. Do not convert to cents/dollars in the same line unless explicitly asked. 0.035 ETH is not "3.5 cents" — it's 0.035 ETH (~$100 at current prices). The ETH amount is the unit of record on-chain. If a USD equivalent is needed, calculate it at current ETH price and label it clearly as approximate.
+
+### 45. Foundation: zero transfers may mean post-shutdown, not never-used (2026-07-13)
+Foundation shut down its platform. If a wallet shows 0 Foundation transfers, it could mean: (a) never used Foundation, OR (b) used Foundation before shutdown and the contract data is no longer indexed. Do not assert "never used Foundation" — state "0 Foundation transfers (never used or post-shutdown not indexed)." The Foundation v1/v2 contract addresses may still appear in historical data but current API access may be limited.
+
+### 46. Multi-mint cost splitting — divide ETH by NFTs minted in same block (2026-07-13)
+When matching ETH out to NFT mints in the same block, if multiple NFTs were minted in the same transaction/block, divide the total ETH by the number of NFTs to get the per-mint cost. This is common — people mint 2, 3, 5, 10+ at once. Without splitting, the mint cost is inflated by the number of mints.
+
+Calculate: count all NFT transfers from 0x0 to the wallet in the same (blockNumber, contractAddress) pair. Divide the max ETH out in that block by that count. Same applies to purchases and sales — if multiple NFTs were bought/sold in the same block, split the ETH accordingly.
+
+Example: RegularDad minted 3 BUILDINGS // NYC (#783, #784, #785) in one block for 0.0477 ETH total. Per-mint cost = 0.0159 ETH, not 0.0477 ETH. Without splitting, the Biggest L showed -0.035 ETH; with splitting it's -0.003 ETH. Same for On-Chain All-Stars: 3 minted for 0.06 ETH = 0.02 each. Also affected Biggest Wins: gristle buddeez 3 minted for 0.14 ETH = 0.047 each, making the win +0.23 ETH instead of +0.13 ETH.
