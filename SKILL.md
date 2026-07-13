@@ -96,6 +96,7 @@ Run: `python3 scripts/run_assessment.py <HANDLE>`
 - **UNCLEAR**: Mixed signals, insufficient data
 - **NEW**: New account with no track record
 - **SUSPICIOUS**: Fake sales (circular ETH), self-buying with circular ETH flow, AI art without disclosure, no socials, wash trading
+- **BORDERLINE**: Real person with genuine socials/artwork but credentials significantly inflated by deceptive platform dynamics (brand-mimicking contract names, operator-funded micro-sales presented as marketplace traction). Not suspicious enough to flag as sybil, but not strong enough for LIKELY_REAL.
 - **Collector profile is NOT suspicious by itself** — collectors transitioning to creation are valid Seeking Nomination candidates. Only flag specific deceptive patterns, not the collector nature of the profile.
 - **Low sales ≠ suspicious** — an artist who hasn't found market traction but has real socials, real artwork, and no deceptive patterns is UNCLEAR, not SUSPICIOUS.
 - **Network context overrides individual assessment** — a profile that looks LIKELY_REAL in isolation (real socials, own contracts, marketplace sales) must be upgraded to SUSPICIOUS if found to be part of a coordinated multi-profile network (simultaneous creation, shared buyer, wash-trading cycles). See "Shared Contract Network Detection" below.
@@ -304,6 +305,7 @@ Fetch ALL token holders (`?module=token&action=getTokenHolders`, iterate pages) 
 
 **Classification guidance:**
 - **Public platform + operator buys from all artists + accumulator pattern + long-tail holders** = LIKELY_REAL for individual artists. The single-buyer concentration is a platform dynamic, not a sybil signal. Note it as a concern but do NOT upgrade to SUSPICIOUS solely on this basis.
+- **BUT — brand mimicry downgrades to BORDERLINE**: If the platform's contract name deliberately mimics a major platform (e.g., "SuperRarer" vs "SuperRare"), artists' "platform participation" is inflated. An artist whose entire on-chain history is on a knockoff contract with micro-priced operator sales should be BORDERLINE, not LIKELY_REAL — even with real socials and a self-deployed contract. The key signal is total lifetime ETH revenue from real third-party buyers, not mint counts on a brand-squatting contract.
 - **Private contract + one buyer + batch-created profiles** = SUSPICIOUS. But verify "batch-created" via CIC dates, not just `created_at`.
 - **Pass-through pattern** (buyer resells 80%+ to other wallets) = SUSPICIOUS even if platform looks real.
 - **Key distinction**: 1,732 holders with long-tail distribution on a live website = platform. 13 holders with no website = private ring.
@@ -476,7 +478,8 @@ Returns activity logs for a profile — drops created, reactions, rating edits (
 - INITIAL assessment: chonkly.eth (0x05df) was beam's sole SuperRare buyer AND deployed the Chonkly contract beam mints on. Flagged as LIKELY_REAL.
 - RD flagged suspicion about the Chonkly contract recurring across assessments. Deeper investigation found 13 6529 profiles all minting on the Chonkly contract, all selling to chonkly.eth. Some NFTs flow back from chonkly.eth to artists (wash-trading-like pattern). Ordinaryartist directly funded Bubblezzz.
 - INITIAL conclusion: "coordinated 13-profile network, all created within 4.5 seconds" → SUSPICIOUS. **THIS WAS WRONG.** The 4.5-second `created_at` window was a batch system event (deconsolidation/migration), NOT actual profile creation. Cross-checking CIC statement dates showed the 13 profiles joined over 14+ months (Rueby May 2025, Curtisforfun Jul 2026). They are NOT coordinated batch creation.
-- **CORRECTED conclusion**: Chonkly is a small NFT platform (chonkly.com, SuperRarer contract with 1,732 holders). chonkly.eth is the platform operator who buys from all artists to bootstrap marketplace liquidity — a common small-platform pattern, NOT a single person running 13 fake profiles. Classification should remain LIKELY_REAL with the caveat of single-buyer concentration. The Ordinaryartist↔Bubblezzz direct ETH link is a genuine connection between two platform users, not evidence of sybil coordination.
+- **CORRECTED conclusion**: Chonkly is a small NFT platform (chonkly.com, SuperRarer contract with 1,732 holders). chonkly.eth is the platform operator who buys from all artists to bootstrap marketplace liquidity — a common small-platform pattern, NOT a single person running 13 fake profiles. The Ordinaryartist↔Bubblezzz direct ETH link is a genuine connection between two platform users, not evidence of sybil coordination.
+- **FURTHER CORRECTION (SuperRarer ≠ SuperRare)**: The initial LIKELY_REAL classification was STILL WRONG. The SuperRarer contract is a deliberate name clone of SuperRare (one extra 'r'). Beam has ZERO real SuperRare transfers — all "SuperRare mints" were on the knockoff. Classification revised to **BORDERLINE**: genuine socials and own TTA contract, but zero real marketplace presence, micro-priced sales to platform operator on a brand-mimicking contract, ~$877 total career revenue.
 - **Lesson 1**: When a shared contract/buyer appears across multiple profiles, investigate the full network — but do NOT assume batch creation from `created_at` timestamps alone. ALWAYS cross-check with CIC statement dates or earliest wave drops.
 - **Lesson 2**: A single buyer for all artists on a small NFT platform is a bootstrap liquidity pattern, not automatically sybil. Check whether the buyer is the platform deployer (operator) vs a single user running multiple personas.
 - **Lesson 3**: Before asserting "coordinated network" or "simultaneous creation," verify the claim against multiple data sources. The 4.5-second claim was repeated in the SKILL.md, beam.md reference, and memory — all wrong. RD caught the contradiction.
@@ -515,6 +518,40 @@ If the `created_at` window is tight but CIC dates span months, the `created_at` 
 
 **PITFALL — `created_at` false batch creation (2026-07-13, CRITICAL)**: The Chonkly case initially reported "13 profiles created within 4.5 seconds" as evidence of coordinated batch creation. This was WRONG. The `created_at` field reflected a batch system event (likely deconsolidation/migration), not actual profile creation. Real timeline from CIC statement dates: profiles joined over 14+ months (Rueby May 2025, XON Jun 2025, Curtisforfun Jul 2026). This reinforces the earlier pitfall about `created_at` not reflecting first appearance. **The corrected lesson**: shared `created_at` timestamps across multiple profiles do NOT prove coordination — they may be a system artifact. Always cross-check with CIC dates and wave drops before asserting "simultaneous creation."
 
+### Marketplace Contract Identification via Internal Transactions (2026-07-13)
+
+When categorizing internal ETH transactions (txlistinternal), identify the source contract to determine if a payment is a marketplace sale. Common contracts that appear as internal tx senders:
+
+- **Foundation v1 proxy** (0xcda72070e455bb31c7690a170224ce43623d0b6f): `AdminUpgradeabilityProxy`, created Jan 2021. Distributes NFTs to buyers and pays ETH to artists. If an artist's own-contract tokens went here, they were listed on Foundation.
+- **Manifold ERC1155LazyPayableClaim** (0x44e94034afce2dd3cd5eb62528f239686fc8f162): Manifold edition drops. Artists mint paid editions, contract forwards proceeds.
+- **Manifold ERC721LazyPayableClaim** (0x7581871e1c11f85ec7f02382632b8574fad11b22): Same pattern for ERC721 editions.
+- **WETH** (0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2): Wrapped ETH unwrap, not a sale.
+- **RelayRouterV3** (0xb92fe925dc43a0ecde6c8b1a2709c170ec4fff4f): Gas relay router, not a sale.
+
+**How to identify**: `GET https://eth.blockscout.com/api/v2/smart-contracts/{address}` → check `name` field. Verified contracts show their name directly.
+
+**Case Study: @beam revenue breakdown**
+- 0x44e94034 (Manifold ERC1155LazyPayableClaim): 0.475 ETH — 25+ small edition sales (Jan-Feb 2023)
+- 0xcda72070 (Foundation v1 proxy): 0.276 ETH — 1 real sale to blamekato.eth (Feb-Apr 2023)
+- 0x7581871e (Manifold ERC721LazyPayableClaim): 0.070 ETH — 7 edition sales (Apr 2023)
+- 0xc360ceca (SuperRarer/Chonkly): 0.139 ETH — micro-priced sales (Feb-May 2026)
+- Total: ~1.09 ETH, with ~0.82 ETH from real platforms (Manifold + Foundation)
+
+### OpenSea Unindexed Contracts (2026-07-13)
+
+**PITFALL**: Contracts not indexed on OpenSea make thousands of NFTs invisible on wallet profiles. chonkly.eth holds 2,200+ NFTs on-chain but shows only 9 on OpenSea because both SuperRarer and Chonkly contracts return 404 on OpenSea's API.
+
+**Rule**: When a wallet shows very few NFTs on OpenSea but has thousands of transfers on Blockscout, check whether the contracts are indexed on OpenSea:
+- `GET https://api.opensea.io/api/v2/collections/chain/ethereum/{contract}/stats` → 404 = not indexed
+- OpenSea v1 API is permanently removed (410) — use v2 only (requires API key for most endpoints)
+- Unindexed contracts are invisible to the broader NFT ecosystem — tokens exist only on their native platform and block explorers
+- This is a signal: if an artist's entire portfolio is on unindexed contracts, their work is invisible to the major marketplace
+
+**Case Study: Chonkly contracts**
+- SuperRarer (0xc360ceca): 404 on OpenSea, 1,732 holders, 16,678 tokens on-chain
+- Chonkly (0x235f1802): 404 on OpenSea, 152 holders, 2,208 tokens on-chain
+- chonkly.eth: 2,200+ tokens on-chain, 9 visible on OpenSea
+
 ### Contract Name Verification (2026-07-13, CRITICAL)
 
 **PITFALL**: Always verify contract ADDRESSES, not just names. A contract named "SuperRarer" (one extra 'r') was mistaken for "SuperRare" (the major curated platform) in the @beam assessment. This inflated the artist's perceived credentials — "55 SuperRare mints" was actually 36 mints on a Chonkly knockoff contract with micro-priced sales to the platform operator.
@@ -531,6 +568,67 @@ If a contract name is a near-clone of a known platform (extra letter, similar sp
 - Reality: Zero SuperRare transfers. All 36 mints on "SuperRarer" (0xc360ceca), a Chonkly contract named to mimic SuperRare
 - Impact: Classification downgraded from LIKELY_REAL to BORDERLINE
 - Lesson: The extra 'r' in "SuperRarer" vs "SuperRare" was the difference between "established artist on major platform" and "artist on unknown micro-platform with brand-squatting contract name"
+
+### OpenSea Indexing Check (2026-07-13, CRITICAL)
+
+**PITFALL**: Always check whether NFT contracts are indexed on OpenSea. A contract can be verified on Blockscout but completely invisible on OpenSea — meaning the tokens have no presence in the standard NFT market ecosystem. This dramatically reduces the value of "sales" on that contract.
+
+**How to check**: `GET https://api.opensea.io/api/v2/collections/chain/ethereum/{contract_address}/stats` — returns 404 if OpenSea doesn't index the contract. Also check the wallet's OpenSea profile — if on-chain holdings show thousands of NFTs but OpenSea shows only a handful, the unindexed contracts are hidden.
+
+**Red flags**:
+- Contract returns 404 on OpenSea v2 API = not indexed, tokens invisible
+- Wallet holds 2,200+ NFTs on-chain but only 9 visible on OpenSea = most contracts unindexed
+- Platform operator wallet has near-zero ETH balance (0.0015 ETH) despite buying from 74 artists = funds swept out, not retained
+- Brand-mimicking contract name (SuperRarer vs SuperRare) + unindexed on OpenSea = the platform operates entirely outside the standard NFT infrastructure
+
+**Case Study: Chonkly/SuperRarer OpenSea invisibility**
+- chonkly.eth holds ~2,200+ NFTs on-chain (SuperRarer: 1,804, Chonkly: 409)
+- OpenSea shows only 9 tokens (the 4 real SuperRare + a few others from indexed collections)
+- Both SuperRarer (0xc360ceca) and Chonkly (0x235f1802) return 404 on OpenSea v2 API
+- Impact: "Sales" on these contracts have no external market visibility. No OpenSea collection page, no price history, no resale liquidity through the primary marketplace.
+- This further diminished the @beam assessment — Chonkly sales are not just micro-priced and single-buyer, they're also invisible to the entire OpenSea ecosystem
+
+**Case Study: @Metpenfaul**
+
+When tracing ETH payments to artists, identify the sender contract to determine if it's a real marketplace payout:
+
+- **SuperRare v1**: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d (name: "SupeRare", symbol: SUPR)
+- **SuperRare v2**: 0xB932a7A1a7c1521A5F199CA0F (name: "SuperRareV2")
+- **Foundation v1 proxy**: 0xcDA72070E455bb31C7690a170224cE43623D0B6f (AdminUpgradeabilityProxy, created Jan 2021). Receives NFTs from artists for listing, distributes to buyers. Internal ETH payouts from this address = Foundation sale proceeds.
+- **Foundation v2**: 0x3B3ee1931Dc30F20FFA2Df07F88f93C1B0b94fC0
+- **OpenSea (Seaport)**: 0x0000000000000068F116a894984e2DB1123eB395
+- **Manifold ERC1155LazyPayableClaim**: 0x44e94034Afce2dD3Cd5Eb62528F239686FC8F162 — forwards edition drop sale proceeds to artist
+- **Manifold ERC721LazyPayableClaim**: 0x7581871e1C11f85eC7F02382632b8574FAD11b22 — forwards ERC721 claim proceeds to artist
+- **WETH**: 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2 — unwrapping WETH is NOT a sale
+
+**Technique: Always investigate the buyer wallet, not just the sale.** When an artist has NFT transfers to a contract, identify the contract type:
+1. Check `GET /api/v2/addresses/{addr}` — is it a contract? What's the balance?
+2. Check `GET /api/v2/smart-contracts/{addr}` — what's the contract name? (e.g., "AdminUpgradeabilityProxy" = proxy pattern, "ERC1155LazyPayableClaim" = Manifold)
+3. Check NFT flow: are NFTs going IN then OUT to many buyers? (marketplace escrow) Or accumulating? (collector)
+4. Check if NFTs return to the artist: if 7 of 9 tokens sent to a contract come back, it was a listing that didn't sell, not 9 sales.
+5. Check the end buyer: if a token does go to a real EOA, verify that EOA has no links to the artist or any suspect network.
+
+### Social Links Verification (2026-07-13, CRITICAL)
+
+**PITFALL (RD correction)**: Social links (X, Instagram, email) can be fake. Do NOT treat the mere existence of social links as a strong positive signal. An X account with 0 followers and 0 tweets, or an Instagram with no posts, is not meaningful verification.
+
+**Rule**: When evaluating social links:
+- Check for actual content (tweets, posts, followers) — not just that the profile exists
+- Cross-reference the bio/content with the artist persona — does it match?
+- A social account created recently with no following/followers is a weak signal
+- Social links should be ONE factor among many, not a deciding factor
+- If the only positive signals are "has social links" + "wallet is old", that's not enough for LIKELY_REAL
+
+### Single-Buyer Concentration (2026-07-13, REINFORCED)
+
+**RD directive**: All sales going to one wallet is suspicious, even if that wallet is a platform operator. Do not dismiss single-buyer concentration as "just a platform bootstrap pattern" without investigating the buyer thoroughly.
+
+**Rule**: When all or nearly all of an artist's sales go to one wallet:
+1. Identify the wallet — is it a contract (marketplace) or EOA (person)?
+2. If EOA: is it the platform deployer? Check contract creation.
+3. Check if NFTs flow back to the artist (wash-trading cycle).
+4. Check the buyer's relationship to other artists on the same platform.
+5. Even if the buyer is a platform operator, flag this as a significant concern — it means the artist has zero independent market demand.
 
 **Case Study: @Metpenfaul**
 - Profile created 2026-07-13, but has 25,000 MemesNominee rep from @DarrenSRS (15K, L77) and @johndoe8891 (10K, L88)

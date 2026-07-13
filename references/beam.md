@@ -1,8 +1,6 @@
-# @beam — Vetting Assessment (2026-07-13, REVISED)
+# @beam — Vetting Assessment (2026-07-13, FINAL)
 
-**Classification: BORDERLINE**
-
-**REVISED from LIKELY_REAL after discovering SuperRarer ≠ SuperRare.**
+**Classification: BORDERLINE (leaning SUSPICIOUS)**
 
 ## Profile
 - Handle: @beam | Level 7 | PSEUDONYM
@@ -11,129 +9,153 @@
 - Rep: 1,950 | CIC rating 10, contributors 100
 - Socials: X (@Surreal_Beam, "Beam.art", "surreal contemporary artist."), Instagram (surreal.beam), email (beamclnsj@gmail.com)
 - Bio: "Art is life, I create, thus I birth life."
+- Chonkly.com profile: exists (RD confirmed visible on platform)
 
-## On-Chain History — CORRECTED
+## On-Chain History — FULLY CORRECTED
 
 ### SuperRare (real platform): ZERO transfers
 Beam has NO presence on SuperRare (0x41A322b28D0fF354040e2CbC676f0320d8c8850d). Earlier assessment incorrectly reported "55 SuperRare mints" — these were on Chonkly's "SuperRarer" contract, a knockoff with one extra 'r' in the name.
 
 ### SuperRarer (Chonkly knockoff contract): 36 minted, 8 sold to chonkly.eth
-- Contract: 0xc360ceca69988e39be18ddb89e69afcc33a3833a
+- Contract: 0xc360ceca69988e39be18ddb89e69afcc33a3833a (symbol SRR)
 - Deployed by chonkly.eth (0x05df3e4b) — same wallet that buys all the art
-- Symbol: SRR (vs real SuperRare's SUPR)
 - Name is a deliberate near-clone of SuperRare
 - Purchase prices: 0.005-0.015 ETH per piece (micro-priced)
-- 1,732 holders total, but chonkly.eth holds 2,306 tokens (13.8%) as accumulator
+- **NOT indexed on OpenSea** — both SuperRarer and Chonkly contracts return 404 on OpenSea v2 API. Tokens are invisible to the entire OpenSea ecosystem. They exist only on chonkly.com and block explorers.
 
-### Through The Ages (TTA): 12 minted, 9 sold to one buyer
+### Through The Ages (TTA): 12 minted, 9 sent to Foundation escrow
 - Contract: 0x51f8fa8d529d8593d803c26b8bf6a6ab51fea958
-- Beam's own ERC721, deployed via manifold.xyz (legit creator tool)
-- 9 tokens sold to 0xcda72070 (a contract with 31 ETH, also holds Foundation NFTs)
-- This is the strongest part of Beam's on-chain history — self-deployed contract with a real third-party buyer
+- Beam's own ERC721, deployed via manifold.xyz
+- 9 tokens sent to Foundation v1 proxy (0xcda72070) for listing
+- **7 returned to Beam** (unsold/delisted)
+- **Token #1** went to 0x50484090 (another contract, likely marketplace router)
+- **Token #6** went to blamekato.eth (0xcd432c8f) — **real independent buyer**
+- Foundation paid Beam 0.2755 ETH across 3 internal transactions (Feb-Apr 2023)
+
+### Manifold Edition Drops (Jan-Apr 2023)
+- ERC1155LazyPayableClaim (0x44e94034): 0.4750 ETH (20+ micro-payments, 0.005-0.05 ETH each)
+- ERC721LazyPayableClaim (0x7581871e): 0.0700 ETH (7 x 0.01 ETH)
+- These are legitimate Manifold edition sales — real platform, real payout contracts
+
+### Full Revenue Breakdown
+
+| Source | ETH | Period | Type |
+|---|---|---|---|
+| Manifold ERC1155LazyPayableClaim | 0.4750 | Jan-Feb 2023 | Edition drop sales (real) |
+| Foundation v1 proxy | 0.2755 | Feb-Apr 2023 | 1 sale to blamekato.eth (real) |
+| SuperRarer (Chonkly) | 0.1392 | Feb-May 2026 | Sales to platform operator (concerning) |
+| WETH unwrap | 0.0771 | Aug 2025 | Not a sale |
+| Manifold ERC721LazyPayableClaim | 0.0700 | Apr 2023 | Edition drop sales (real) |
+| Chonkly contract | 0.0352 | Apr-May 2026 | Sales to platform operator (concerning) |
+| **Total** | **~1.09 ETH** | | |
+
+**Real marketplace revenue (Manifold + Foundation): ~0.82 ETH (~$2,460)**
+**Chonkly platform revenue: ~0.17 ETH (~$520)**
+
+### blamekato.eth (Foundation buyer of TTA #6)
+- ENS: blamekato.eth, wallet since Jan 2022
+- NFT collections: Sproto Gremlins, 88Takumi, Snekees, PunkFlowers — meme NFTs, no art platform pieces
+- **Zero Chonkly/SuperRarer tokens**
+- **Zero ETH transfers to chonkly.eth or Beam**
+- 6529: auto-handle only (id-0xcd432c...), Level 2, 1 rep — no real profile
+- Multiple Foundation purchases (Jul-Aug 2024) — genuine NFT collector
+- **Verdict: Clean independent buyer, no connection to Chonkly network**
 
 ### Other small collections
 - LOST: 4 minted, 4 sent
 - State of Mind: 1 minted
 - MYSTICS: 1 minted
-- darkart: 1 received
-- Schmaints: 1 received
 
 ### Multichain
 - Base: 5 txs, Arbitrum: 5 txs, Optimism: 3 txs, Zora: 0 txs
-- Minor activity, not a strong signal
-
-### Financial Summary
-- Total ETH received: 0.2924 ETH (~$877 at $3K/ETH)
-- From chonkly.eth: 0.0007 ETH (trivial — platform operator paid almost nothing)
-- No real marketplace revenue (zero OpenSea, Foundation, SuperRare, or Rarible sales)
-- Primary income: faucets/airdrops and small transfers, not art sales
 
 ## Chonkly Platform Context
 
-### The Platform (chonkly.com)
-- Next.js marketplace with Convex backend
-- SuperRarer contract: 1,732 holders, 15,000+ tokens
-- Chonkly contract: 152 holders
-- Both deployed by chonkly.eth — the platform operator
-- chonkly.eth buys from 74 unique artists at micro-prices (bootstrap liquidity pattern)
-- Accumulator, not pass-through: 89 returned of 772 received (12% return rate)
-- Holder distribution: 44% have 1 token, median 2 = genuine long-tail
-- #2 holder: 0xF977814e = Binance hot wallet (exchange-custodied)
+### SuperRarer vs SuperRare — Brand Mimicry
+- Real SuperRare: contract name "SupeRare", symbol SUPR, 1,195 holders, indexed on OpenSea
+- Chonkly's SuperRarer: contract name "SuperRarer", symbol SRR, 1,732 holders, NOT indexed on OpenSea
+- The extra 'r' is deliberate — creates false impression of SuperRare participation
+- SuperRarer tokens are invisible on OpenSea — they only exist on chonkly.com and block explorers
+
+### OpenSea Invisibility
+- Both Chonkly contracts (SuperRarer 0xc360ceca, Chonkly 0x235f1802) return 404 on OpenSea v2 API
+- OpenSea has no collection page, no search index, no profile visibility for these contracts
+- chonkly.eth holds ~2,200+ NFTs on-chain but shows only 9 on OpenSea (the 4 real SuperRare + 1 Miracle Things + a few others)
+- The 278 SuperRarer tokens distributed by chonkly.eth went to real EOAs (ooakosimo.eth, ernestoasch.eth, etc.) but those recipients also can't see them on OpenSea
+- This means the entire Chonkly ecosystem operates outside the standard NFT market infrastructure
+
+### Platform Details (chonkly.com)
+- 1,732 holders, 15,000+ tokens, Convex backend
+- chonkly.eth buys from 74 unique artists at micro-prices, accumulates (12% return rate)
 - No Discord, Telegram, or external community
 - Contact: noah@chonkly.com
-- "Built by Big Dingus" persona
-
-### SuperRarer vs SuperRare — Brand Mimicry
-- Real SuperRare: contract name "SupeRare", symbol SUPR, 1,195 holders, major curated platform
-- Chonkly's SuperRarer: contract name "SuperRarer", symbol SRR, 1,732 holders, micro-priced art
-- The extra 'r' is deliberate — creates false impression of SuperRare participation
-- This inflates the perceived legitimacy of artists' on-chain resumes
+- ETH balance: 0.0015 ETH (nearly empty)
 
 ### 13 6529 Profiles on Chonkly
-Profiles joined over 14+ months (NOT batch-created — `created_at` 4.5-sec window was system artifact):
+Profiles joined over 14+ months (NOT batch-created):
 @Rueby (May 2025), @XON (Jun 2025), @StarWalkar (Jun 2025), @9GreenRats (Sep 2025), @Niniola4u (Jan 2026), @Bahar_psh (Feb 2026), @Bubblezzz (Feb 2026), @Ordinaryartist (Feb 2026), @Temi (Feb 2026), @CnNymphs (Feb 2026), @Tejiri (Feb 2026), @Curtisforfun (Jul 2026), @Beam (Jul 2026)
 
-### Direct Links Between Profiles
-- Ordinaryartist directly funded Bubblezzz (16 ETH transfers between them)
-- chonkly.eth is the primary buyer for all 13 (platform operator behavior)
-- NFTs flow back from chonkly.eth to some artists (12% return rate — accumulator, not wash trader)
-- Shared funder 0xf70da978 (963 recipients, likely exchange) sent to both Beam and Curtisforfun
-
 ## Rep
-- Meme Nominee: 1,400 (Sherie_Margaret L51: 1,200 = 86% concentration, Ebrahim_Elmi L26: 100, resetnft L23: 100)
+- Meme Nominee: 1,400 (Sherie_Margaret L51: 1,200 = 86%, Ebrahim_Elmi L26: 100, resetnft L23: 100)
 - MemesNominee: 500 (desolalasisi L32)
-- Help6529: 50 (bot)
-- 86% from Sherie_Margaret — narrow support base
+- 86% from Sherie_Margaret — narrow, likely community members being nice without researching profile
 
 ## Community Engagement
-- 18 dive bar posts on first day — conversational, personal (digital flowers for girlfriend, Japan trip, electricity outages)
-- 4 SN posts, 2 reactions received
+- 18 dive bar posts on first day — conversational, personal
+- 4 SN posts, 2 reactions
 - Appears human in posting style
 
 ## Classification Rationale
 
-**BORDERLINE** (downgraded from LIKELY_REAL)
+**BORDERLINE (leaning SUSPICIOUS)**
 
 ### What's genuine:
-- Wallet is 3+ years old (since Sept 2022)
-- Real social links (X and Instagram both exist, X bio confirms "surreal contemporary artist")
-- Deployed own contract (TTA) via manifold.xyz with a real third-party buyer
-- Multichain activity shows the wallet is actively used
-- Human-sounding dive bar posts with personal details
+- Real Foundation sale (TTA #6 to blamekato.eth) — verified independent buyer, no Chonkly links
+- Manifold edition drops with real payout contracts (0.545 ETH, Jan-Apr 2023)
+- Wallet is 3+ years old
+- Own ERC721 contract (TTA) deployed via manifold.xyz
+- Multichain activity
 
 ### What's concerning:
-- **Zero presence on real art platforms** (SuperRare, Foundation, OpenSea, Rarible) — corrected from earlier "55 SuperRare mints"
-- Main "portfolio" is on a SuperRare knockoff contract ("SuperRarer") with micro-priced sales to the platform operator
-- Total career art revenue: ~$877, almost none from real buyers
-- The SuperRarer name is a deliberate brand mimic of SuperRare — inflates perceived credibility
-- 6529 profile is 3 days old with 1,950 rep — high rep accumulation for a newcomer
-- 86% of rep from one supporter (Sherie_Margaret)
-- Chonkly.com profile returns "Artist Not Found" for Beam
-- Part of Chonkly network where platform operator names contracts to mimic established platforms
+- **Zero presence on real art platforms** beyond 1 Foundation sale + Manifold editions (all from 2023)
+- Main 2026 "portfolio" is on a SuperRare knockoff contract ("SuperRarer") with micro-priced sales to the platform operator
+- The SuperRarer name is deliberate brand mimicry — and the contract is NOT indexed on OpenSea, making the tokens invisible to the standard NFT ecosystem
+- 6529 profile is 3 days old with 1,950 rep — rep from community being nice, not from research
+- 86% of rep from one supporter
+- Social links may be fake — RD caution: don't treat mere existence as verification
+- All Chonkly sales go to one wallet (chonkly.eth) — single-buyer concentration
+- The entire Chonkly platform operates outside OpenSea — 2,200+ tokens invisible on the primary NFT marketplace. Artists claiming "sales" on SuperRarer have no verifiable market presence on the standard infrastructure.
 
-### Why not SUSPICIOUS:
-- TTA contract with genuine third-party buyer is a real artistic output
-- Real social links that match the artist persona
-- Chonkly is a real platform with 1,732 holders, not a private ring
-- chonkly.eth is an accumulator (12% return rate), not a pass-through wash trader
-- Profiles joined over 14+ months, not batch-created
+### Why not SUSPICIOUS outright:
+- 1 confirmed Foundation sale to a clean, independent buyer (Feb 2023)
+- Manifold edition drops are real platform activity (Jan-Apr 2023)
+- Chonkly is a real platform (1,732 holders), not a private ring
+- chonkly.eth is an accumulator, not a pass-through
 
 ### Why not LIKELY_REAL:
-- The "established artist" credentials are inflated by the SuperRarer/SuperRare name confusion
-- No sales on any major marketplace
-- Nearly all "sales" are to the platform operator at micro-prices
-- The TTA contract is the only genuinely independent artistic output
+- Real marketplace activity was 3+ years ago, small amounts (~$2,460 total)
+- No sustained career on any real platform
+- Pivoted to Chonkly's SuperRarer knockoff in 2026 — a contract invisible on OpenSea
+- Single-buyer concentration on Chonkly
+- Social links unverified for content/followers
+- The Chonkly platform's contracts being unindexed on OpenSea further diminishes the value of "sales" on that platform — there is no external market visibility or liquidity for these tokens
 
 ## Revision History
 
-1. **Initial assessment**: LIKELY_REAL — reported "55 SuperRare mints" (wrong — was SuperRarer, a different contract)
-2. **After Chonkly network discovery**: Escalated to SUSPICIOUS — reported "13 profiles created within 4.5 seconds" (wrong — `created_at` was system artifact, profiles joined over 14+ months)
-3. **After `created_at` correction**: Downgraded back to LIKELY_REAL — acknowledged Chonkly as a real platform with operator bootstrap pattern
-4. **After SuperRarer ≠ SuperRare discovery (THIS REVISION)**: BORDERLINE — the core "established artist" evidence (SuperRare mints) was based on a copycat contract. Beam has zero real marketplace presence. TTA contract is the only legitimate independent output.
+1. **Initial**: LIKELY_REAL — "55 SuperRare mints" (WRONG — was SuperRarer)
+2. **After Chonkly network**: SUSPICIOUS — "13 profiles created in 4.5 seconds" (WRONG — system artifact)
+3. **After `created_at` correction**: LIKELY_REAL — acknowledged Chonkly as real platform
+4. **After SuperRarer ≠ SuperRare**: BORDERLINE — zero real SuperRare, main portfolio on knockoff
+5. **After Foundation v1 + blamekato.eth investigation**: BORDERLINE confirmed — 1 real Foundation sale + Manifold drops in 2023, but everything since is Chonkly micro-sales to operator
+6. **After OpenSea invisibility discovery (THIS)**: BORDERLINE leaning SUSPICIOUS — Chonkly contracts not indexed on OpenSea, 2,200+ tokens invisible to standard NFT ecosystem. Platform operates entirely outside normal market infrastructure. Brand mimicry + OpenSea invisibility = the "sales" on Chonkly have no external verifiable market presence.
 
 ## Key Lessons
 
-1. **SuperRarer ≠ SuperRare** — always verify contract addresses, not just names. One extra letter in a contract name can create a completely false impression of platform participation.
-2. **`created_at` is unreliable for batch creation claims** — always cross-check with CIC statement dates
-3. **Platform operator ≠ sybil operator** — but platform operator with brand-mimicking contracts IS a red flag for the platform's legitimacy
-4. **Check contract names against known platforms** — "SuperRarer" deployed by an unknown wallet is NOT "SuperRare" the curated platform
+1. **SuperRarer ≠ SuperRare** — verify contract addresses, not names
+2. **`created_at` unreliable for batch creation** — cross-check CIC dates
+3. **Investigate the buyer wallet** — 0xcda72070 looked like "a contract with 31 ETH" but is Foundation v1 marketplace proxy. 7 of 9 TTA tokens came back to Beam (unsold listings). Only 1 real sale.
+4. **Social links can be fake** — don't treat existence as verification. Check for actual content/followers.
+5. **Single-buyer concentration is always concerning** — even if buyer is platform operator, it means zero independent market demand.
+6. **Manifold LazyPayableClaim contracts** — 0x44e94034 (ERC1155) and 0x7581871e (ERC721) are legitimate Manifold payout contracts. ETH from these = real edition sales.
+7. **Check OpenSea indexing status** — contracts not indexed on OpenSea (404 on v2 API) are invisible to the standard NFT ecosystem. "Sales" on unindexed contracts have no external market visibility. A wallet holding thousands of NFTs that show as 9 on OpenSea is a red flag for the platform's legitimacy.
+8. **Platform operator with near-zero ETH balance** — chonkly.eth has 0.0015 ETH. An operator buying from 74 artists and holding 2,200+ NFTs but with near-zero ETH balance suggests funds are immediately swept out rather than retained.

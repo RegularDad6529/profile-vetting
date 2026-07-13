@@ -33,6 +33,8 @@ In February–May 2026, Beam began minting on chonkly.com, a smaller NFT marketp
 
 **Note on platform naming:** Chonkly's primary contract is named "SuperRarer," which is a different contract from SuperRare (the well-known curated platform). Beam has zero transfers on SuperRare itself. The similar naming is a feature of the Chonkly platform, not something individual artists control.
 
+**Note on OpenSea visibility:** The SuperRarer and Chonkly contracts are not indexed on OpenSea. This means tokens minted on these contracts do not appear in OpenSea profiles, collections, or activity feeds. They are only visible on chonkly.com itself and on block explorers. This affects all artists on the Chonkly platform, not just Beam.
+
 ### Other Collections
 
 Small activity on a few other micro-collections: LOST (4 minted), State of Mind (1), MYSTICS (1). Minor multichain presence on Base, Arbitrum, and Optimism.
@@ -61,19 +63,20 @@ Small activity on a few other micro-collections: LOST (4 minted), State of Mind 
 ## Strengths
 
 1. Wallet active for 3+ years with genuine on-chain history
-2. Self-deployed ERC-721 contract (TTA) via manifold.xyz with a real third-party sale on Foundation
+2. Self-deployed ERC-721 contract (TTA) via manifold.xyz with a real third-party sale on Foundation to an independent collector
 3. Manifold edition drops with 25+ small sales to various buyers in 2023
-4. Real social links matching the artist persona
+4. Social links present matching the artist persona
 5. Active and human community participation on 6529
 
 ## Things to Consider
 
-1. Real platform sales (Manifold + Foundation) occurred in early 2023 — limited activity on major platforms since then
-2. Recent art activity (2026) is primarily on Chonkly, a smaller platform where the operator wallet is the main buyer for all artists
-3. Total career art revenue is modest (~1.09 ETH / ~$3,300 across all sources)
-4. 6529 profile is new and most rep comes from one supporter
-5. The "SuperRarer" contract name on Chonkly is similar to but distinct from "SuperRare" — worth being aware of when describing on-chain history to others
+1. Real platform sales (Manifold + Foundation) were concentrated in early 2023 — no major platform activity since then
+2. Recent art activity (2026) is on Chonkly, a smaller platform where the operator wallet is the main buyer for all artists
+3. Chonkly's contracts are not indexed on OpenSea, so tokens minted there don't appear on the primary NFT marketplace — this limits external visibility and resale potential
+4. The "SuperRarer" contract name on Chonkly is similar to but distinct from "SuperRare" — worth being aware of when describing on-chain history to others, as they are completely different platforms
+5. Total career art revenue is modest (~1.09 ETH / ~$3,300 across all sources)
+6. 6529 profile is new and most rep comes from one supporter
 
 ## Bottom Line
 
-Beam has a genuine but thin artistic track record. The 2023 Manifold and Foundation activity — particularly the self-deployed TTA contract with a sale to an independent collector — establishes a real creative history. The more recent Chonkly activity is on a smaller platform with a different dynamic. For 6529 nomination purposes, building on the community engagement and creating new work on established platforms would strengthen the profile.
+Beam has a genuine but thin artistic track record. The 2023 Manifold and Foundation activity — particularly the self-deployed TTA contract with a sale to an independent collector — establishes a real creative history. The more recent Chonkly activity operates on a smaller platform that is not integrated with OpenSea, which limits the visibility of that work. For 6529 nomination purposes, building on the community engagement and creating new work on established, OpenSea-indexed platforms would strengthen the profile.
