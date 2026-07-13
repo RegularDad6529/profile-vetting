@@ -181,8 +181,21 @@ To find the ETH price of NFT purchases/sales, match by block number:
 - Sort all matches by ETH value descending, take top 3 for each
 - Example: deeze's top purchase = Skulls of Luci #45 at 62 ETH (May 2023), top sale = Moonbirds #7237 at 38.56 ETH (Apr 2022)
 
-### 33. Linked wallets with separate 6529 profiles (2026-07-13)
-When discovering unconsolidated wallets via ENS subgraph, ALWAYS check each wallet for a 6529 profile via `GET /identities/{address}`. If a linked wallet has its own 6529 profile, include it in the assessment with: handle, level, classification, and relationship to the main profile. Do NOT speculate on identity links between profiles based on transactions alone (see pitfall #22). Example: blocknoob's original wallet (blocknoob.eth) has a separate profile @famous (Level 6) — included in assessment. ranagade.eth and lilblnde.eth (deeze's linked wallets) returned Level 0 profiles with no handle — noted but not prominent.
+### 33. Check linked wallets for 6529 profiles (2026-07-13, UPDATED)
+If a linked/unconsolidated wallet has its own 6529 profile, include that profile (handle, level, classification, relationship) in the assessment. 6529 caps at 3 wallets per profile — delegated wallets may have separate profiles.
+
+### 33b. Discover delegated wallets via ENS subdomains (2026-07-13)
+The 6529 API `/delegations` endpoint exists but address filtering is BROKEN (returns global data regardless of from_address/to_address params — same bug as drops `author_handle`). Instead, discover delegated wallets via ENS subgraph:
+1. For each ENS name in the profile (e.g. `regulardad.eth`), query ENS subgraph for all subdomains: `domains(where: {name_ends_with: ".regulardad.eth"})`
+2. Also query all domains owned by each profile wallet: `domains(where: {owner: "<wallet>"})`
+3. Resolve each subdomain to an address via `resolvedAddress`
+4. Check if the resolved address is in the 6529 profile's wallet list — if NOT, it's a delegated/hidden wallet
+5. Check if the delegated wallet has its own 6529 profile via `GET /identities/{address}`
+6. Include delegated wallets in the assessment with: ENS name, address, 6529 profile (if any), relationship to main profile
+
+Example: RegularDad's profile has 3 wallets (memes/regulardad/safe.regulardad.eth). ENS subdomain search found `hot.regulardad.eth` → 0xbe3471f8... owned by regulardad.eth but NOT in the 3-wallet cap. It has its own 6529 profile (@Hot, Level 0, TDH 0). Also found `mint.regulardad.eth` (unresolved) and `cool.regulardad.eth` (owned by a different wallet). Plus `dickbuttmfer.eth`, `memenetworknews.eth`, `strategyx6529.eth`, `karenarmy.eth` all resolving to the primary wallet.
+
+ENS subgraph query: `POST https://api.thegraph.com/subgraphs/name/ensdomains/ens` with `{"query": "{ domains(where: {name_ends_with: \\".regulardad.eth\\"}) { name owner { id } resolvedAddress { id } } }"}`
 
 ### 34. ENS subgraph may miss wallets — search by ENS name directly (2026-07-13)
 The ENS subgraph query `{ domains(where: {owner: "<wallet>"}) }` only finds ENS names OWNED by a wallet. It will NOT find a wallet that owns an ENS name if you don't already know that wallet exists. amtwo.eth was owned by 0xa1697786... (the oldest and most active wallet, Dec 2021) but was NOT found via the subgraph because none of the 2 profile wallets owned amtwo.eth. Solution: if the handle matches an ENS name pattern (e.g., `amtwo` → `amtwo.eth`), query the subgraph by name: `{ domains(where: {name: "amtwo.eth"}) { owner { id } resolvedAddress { id } } }` to find the owning wallet. Always do a name-based lookup in addition to the owner-based lookup.
