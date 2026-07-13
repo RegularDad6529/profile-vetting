@@ -161,8 +161,12 @@ Every collector activity section must include:
 ### 30. Game mechanics can look like sales (2026-07-13)
 NFTs sent to 0x0 (burn address) are NOT sales — they may be game mechanics. death and taxes: citizens were burned and converted to evaders (1:1, same timestamp) — NOT sold. Always check: (a) is the destination 0x0? (b) is there a corresponding mint from 0x0 at the same timestamp? If yes → game mechanic, not sale. Exclude from "most flipped" lists.
 
-### 31. Drops API: author_handle param + wave.name field (2026-07-13)
-To find an artist's wave activity: `GET /drops?author_handle={handle}&limit=50` works. The `identity_id` param returns drops from OTHER people in waves the user is subscribed to (not their own posts). The `author_handle` param returns only the artist's own drops. The wave object has a `name` field (not `title`). Timestamps in `created_at` are epoch milliseconds (divide by 1000). Example: deeze had 10 posts across 7 waves, all from July 13 2026 — just started engaging.
+### 31. Drops API author_handle filter is BROKEN — use activity API (2026-07-13, CORRECTED)
+The `author_handle` and `identity_id` params on `GET /drops` do NOT filter by author — they return global recent drops from random people. Do NOT use them to find an artist's wave posts.
+
+**Correct method**: Use `GET /identities/{handle}/activity` which returns `{last_date, date_samples}` — a 365-element array of daily drop counts. Non-zero entries = active days. This confirms whether the artist has ANY wave activity in the past year. Example: deeze showed 0 active days out of 365 — zero wave activity despite the broken `author_handle` filter falsely returning 10 "drops."
+
+For specific wave post counts, manually scan wave drops and filter by author handle locally (but note: wave pagination may be limited — maybe's dive bar has 373K+ drops).
 
 ### 32. Matching ETH prices to NFT purchases/sales (2026-07-13)
 To find the ETH price of NFT purchases/sales, match by block number:

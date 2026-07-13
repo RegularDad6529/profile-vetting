@@ -19,14 +19,8 @@
 - No other artist output
 
 ## Wave Activity
-- maybe's dive bar: 4 posts
-- Sonya's Magical Realm: 1 post
-- CuttleWave: 1 post
-- 6529 Tech Feedback: 1 post
-- Shillandia: 1 post
-- Sherie's Work Archive: 1 post
-- Movie Gul: 1 post
-- All 10 posts from today (July 13, 2026) — just started engaging
+- Zero posts in the past year (confirmed via activity API: 0 active days out of 365)
+- No profile wave, no MS submissions
 
 ## Collector Activity
 - 4,163 NFT transfers
