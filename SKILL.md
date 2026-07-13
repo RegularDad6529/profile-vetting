@@ -633,14 +633,25 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 1. Check `GET /api/v2/addresses/{addr}` — is it a contract? What's the balance?
 2. Check `GET /api/v2/smart-contracts/{addr}` — what's the contract name? (e.g., "AdminUpgradeabilityProxy" = proxy pattern, "ERC1155LazyPayableClaim" = Manifold)
 3. Check NFT flow: are NFTs going IN then OUT to many buyers? (marketplace escrow) Or accumulating? (collector)
-4. Check if NFTs return to the artist: if 7 of 9 tokens sent to a contract come back, it was a listing that didn't sell, not 9 sales.
-5. Check the end buyer: if a token does go to a real EOA, verify that EOA has no links to the artist or any suspect network.
-6. **Check 6529 API artist fields FIRST** (2026-07-13): Before diving into on-chain wallet analysis, check the 6529 profile for `artist_of_prevote_cards`, `winner_main_stage_drop_ids`, and `is_wave_creator`. These fields immediately establish whether someone is a recognized artist. On-chain wallet analysis is supplementary, not the primary source. Example: @arsonic was initially misclassified as "not an artist" because the on-chain review only looked at personal wallet NFT transfers and missed collaborative wallets. The 6529 API showed 2 Main Stage wins and Meme Card #37 artist credit.
-7. **Check collaborative wallets** (2026-07-13): Artists may deploy work from collaborative wallets (e.g., @zeeblocks uses ze-blocks.eth for Pebbles on NextGen 6529). If an artist mentions a duo or collective, search for the collaborative wallet and check ETH transfers between wallets for revenue sharing patterns.
-8. **Exclude self-transfers from ETH revenue**: Before counting "incoming ETH", check whether the sender wallet is one of the artist's own consolidated wallets (same ENS root, same 6529 identity, or known self-wallets). Self-transfers between own wallets inflate gross ETH flows dramatically. Always calculate NET art revenue = (incoming from marketplaces + incoming from independent buyers) - (self-transfers + exchange withdrawals).
-7. **Fetch ALL transaction pages** (2026-07-13, CRITICAL): Blockscout API paginates at 100 txs/page. Wallets with high activity can have 1,000+ txs (RD example: 1,808 txs across 18 pages). Only fetching page 1 massively undercounts ETH flows. ALWAYS loop through all pages until a page returns < 100 results. This applies to both `txlist` (ETH transfers) and `tokennfttx` (NFT transfers).
-8. **Never report gross incoming ETH as a headline number** (2026-07-13): Gross incoming ETH includes exchange withdrawals, self-transfers, and personal funds — all meaningless for artist assessment. ONLY report ETH from marketplace contracts (OpenSea/Seaport, Foundation, Manifold, SuperRare) and verified direct art sales. Categorize every incoming tx by source before reporting anything. Exchange withdrawals and self-transfers should be counted separately and excluded from art revenue. Example: RD's gross incoming was 128K ETH but art marketplace revenue was 0 ETH — the 128K was just years of exchange withdrawals.
+## Pitfalls & Lessons Learned
 
+**See `references/pitfalls.md` for the full list** — 14 documented pitfalls including:
+- Check 6529 API artist fields FIRST (artist_of_prevote_cards, winner_main_stage_drop_ids)
+- Check collaborative wallets (zeeblocks pattern)
+- Exclude self-transfers and exchange withdrawals from ETH revenue
+- Fetch ALL transaction pages (Blockscout paginates at 100/page)
+- Never report gross incoming ETH as headline — only marketplace revenue
+- Separate artist sales from collector resales on Foundation
+- Find unconsolidated wallets via ENS subgraph (6529 caps at 3 wallets per profile)
+- Never report gross marketplace payout as artist revenue — check if wallet MINTED any NFTs from 0x0 first
+- Collector collection selection: be comprehensive — total counts, notable by volume OR significance, 6529 ecosystem separately, established art platforms, any collection with >10 transfers
+- SuperRarer (Chonkly) ≠ SuperRare — always verify contract addresses
+- Social links = neutral data, no judgmental language about rep
+- Feedback docs: no raw contract addresses
+- Blockscout doesn't index proxy contract NFT transfers
+- eth_call patterns for NextGen 6529 contract metadata
+
+Key marketplace contract addresses and 6529 API endpoints also in `references/pitfalls.md`.
 **Known marketplace contract addresses (for buyer wallet identification):**
 - Foundation v1 proxy: 0xcda72070E455bb31C7690a170224cE43623D0B6f (AdminUpgradeabilityProxy, created Jan 2021) — escrows NFTs for listing, pays sellers via internal txs
 - Foundation v2: 0x3B3ee1931Dc30F20FFA2Df07F88f93C1B0b94fC0
@@ -650,15 +661,16 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 - SuperRare v2: 0xB932a70A57673d89f4acFFBE830e8ED7f75fb9e0 (name: "SuperRareV2") — also real SuperRare
 - Seaport (OpenSea): 0x00000000000001adF28eF1c7D0186488931B0b94fC0
 
-### Collector Resale vs Artist Sale (2026-07-13)
+### Collector Resale vs Artist Sale (2026-07-13, REINFORCED)
 
-**PITFALL**: Marketplace payouts (Foundation, OpenSea, SuperRare) are not always artist revenue. A collector who buys an NFT and later resells it receives a marketplace payout — but that's a **collector flip**, not an **artist sale**. The ETH amount can be large (arsonic: 2,209 ETH from Foundation for reselling Inevitable Rise #6, a piece by another artist).
+**PITFALL**: Marketplace payouts (Foundation, OpenSea, SuperRare) are not always artist revenue. A collector who buys an NFT and later resells it receives a marketplace payout — but that's a **collector flip**, not an **artist sale**. The ETH amount can be large (arsonic: 2,209 ETH from Foundation for reselling Inevitable Rise #6; hugofaz: 25,759 ETH from Foundation including ~21K ETH from reselling Sebastiao Salgado "Amazonia" and Bruce Gilden photography). Blocknoob: 191K ETH from Foundation, ALL collector resales (234 bought, 84 resold, 0 minted).
 
 **Rule**: Before counting a marketplace payout as artist revenue, verify the NFT being sold was created by the artist being assessed:
 1. Check which NFT was sent to the marketplace contract around the payout date
 2. Check if the NFT's contract was deployed by the artist (own contract = artist sale)
 3. Check if the NFT was minted by the artist (mint tx from artist = artist sale)
 4. If the NFT was received FROM another wallet or marketplace (purchased/collected), the subsequent sale is a **collector resale**, not artist revenue
+5. For high-volume Foundation collectors, the majority of Foundation payouts may be collector resales — check ALL NFTs sent to Foundation and track which returned (unsold) vs stayed (sold)
 
 **Case Study: @arsonic Foundation payout**
 - 2,209 ETH received from Foundation v1 proxy (3 internal txs, Jun-Jul 2023)
