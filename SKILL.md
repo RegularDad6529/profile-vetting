@@ -648,6 +648,7 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 - Foundation bid escrow inflates gross flows — ETH is locked when bidding and returned if outbid. Never show gross ETH figures for Foundation. Only show NFT counts (bought/sold/held) and net position
 - Minting from a contract ≠ creating the contract. Check who DEPLOYED the contract, not just who minted from 0x0. david example: minted 172 "death and taxes" NFTs from 0x0 but the contract was created by a separate factory (0x3b3B425b...) — he's a collector, not the artist. Always verify contract creator address via Blockscout v2 addresses API (creator_address_hash field).
 - Collector collection selection: be comprehensive — total counts, notable by volume OR significance, 6529 ecosystem separately, established art platforms, any collection with >10 transfers
+- Self-transfers inflate NFT transfer counts — when reporting "held" or "sold", exclude transfers between the subject's own wallets. blocknoob example: 84 Foundation NFTs "sent out" but 66 were to his own wallets — only 18 actually sold. Report net held after excluding self-transfers.
 - SuperRarer (Chonkly) ≠ SuperRare — always verify contract addresses
 - Social links = neutral data, no judgmental language about rep
 - Feedback docs: no raw contract addresses

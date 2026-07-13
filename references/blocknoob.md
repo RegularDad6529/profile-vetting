@@ -2,7 +2,7 @@
 
 ## 6529 Community
 - Level 86 | Rep 2,391,006 | CIC 361,220 | TDH 8,638,554
-- PSEUDONYM | Wave Creator
+- PSEUDONYM
 - Wallet active since January 2021 (~5.5 years)
 - 6529 profile consolidates 3 wallets (max), but 8 total wallets identified
 
@@ -25,7 +25,7 @@
 
 ## Artist Work
 
-### 6529 Main Stage — 2x Winner
+### 6529 Main Stage — 2x Winner (2 Meme Cards)
 1. **Memetic Curator** — 85 raters, rating 71.8M, minted on The Memes
 2. **Let This Meme IN** — 76 raters, rating 51.9M, minted on The Memes
 
@@ -34,25 +34,23 @@
 - ERC1155Creator / Manifold (Sep 2022) — 0 NFT transfers
 
 ### Artist Revenue
-- Zero from own contracts (both deployed contracts have no NFT activity)
-- Zero artist sales on Foundation (0 Foundation NFTs minted — all Foundation activity is buying and reselling other artists' work)
-- Artist output is exclusively on 6529 platform (The Memes Main Stage)
+- 2 Meme Cards minted on The Memes (Main Stage wins)
+- No other artist sales from own contracts
 
 ## Collector Activity
 - 2,667 total NFT transfers across all 8 wallets
 - 307 unique collections
 
 ### Foundation
-- 150 bought, 84 sold, 66 still held
-- Active secondary market participant (primarily 2021 bull market era)
-- Net position is negative (more spent acquiring than received from reselling)
+- 218 bought, 18 sold to others, 200 still held
+- Primarily a holder, not a flipper — kept ~92% of purchases
 
 ### Notable collections
-- **Foundation** (367) — one of the most active Foundation collectors/resellers
+- **Foundation** (218) — major collector, kept almost everything
 - **Avastar** (361) — early NFT project
-- **Art Blocks** (95) — generative art collector
+- **Art Blocks** (95) — generative art
 - **dwellers** (37) — 6529 ecosystem
-- **6529 Gradient** (15) — 6529 ecosystem
+- **6529 Gradient** (1 held) — 6529 ecosystem
 - **Cryptoadz** (15), **August Sander 10K** (15) — established collections
 - **SuperRare** (4) — real SuperRare collecting
 - Zero SuperRarer/Chonkly exposure
@@ -65,10 +63,11 @@
 - 6529complaints.eth and subdomains suggest community/meme operations beyond personal collecting
 
 ## Review Date
-2026-07-13
+2026-07-13 (updated per artist feedback)
 
 ## Notes
-- blocknoob is primarily a collector whose artist output lives on 6529 (2 Main Stage wins)
+- blocknoob is primarily a collector whose artist output is 2 Meme Cards on The Memes (Main Stage wins)
 - The 6529 profile's 3-wallet cap misses his original and most active wallet (blocknoob.eth)
+- Foundation collector who holds — 200 of 218 purchases still held
 - Operates multiple ENS names for different purposes (complaints/meme operations, giveaways, crypto)
 - "noobmuseum" naming suggests a curatorial/museum approach to collecting
