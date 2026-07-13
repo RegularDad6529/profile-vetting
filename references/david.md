@@ -38,8 +38,7 @@
 - BrainDrops (33), Terraforms (26), Art Blocks (24)
 - Ten Thousand Tokens (24), Raccools (26), Time Variants (25)
 - ENS (20 held — registered 129, sold/released 109)
-- death and taxes: evaders (85 held, minted from public collection)
-- death and taxes: citizens (sold all 86)
+- death and taxes: evaders (85 held), citizens (85 burned → converted to evaders via game mechanic, 1 sent to daimon.eth)
 
 ### 6529 ecosystem
 - NextGen 6529 (4), 6529 Gradient (2), Karen Army (1)
@@ -52,9 +51,7 @@
 - Zero SuperRarer/Chonkly exposure
 
 ### Most flipped (bought then sold)
-- ENS (109 sold), death and taxes: citizens (86 sold)
-- CloneX (39 sold — all), MNLTHRVLD (35 sold)
-- Ethlizards (26 sold), SewerPass (18 sold)
+- ENS (109 sold), CloneX (39 sold — all), Ethlizards (26 sold)
 
 ## On-Chain Notes
 - 5244.eth not captured in 6529 profile's 3-wallet cap
