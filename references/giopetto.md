@@ -40,8 +40,8 @@
 3. Cool Monkes #4937 — 0.63 ETH — Jan 2022
 
 ### The Biggest L
-- Pixelmon #4551: bought 1.30 ETH → sold 0.01 ETH = **-1.29 ETH**
-- CryptoSkulls #249: 1.30 ETH → 0.05 ETH = **-1.25 ETH**
+- Pixelmon #4551: bought 1.30 ETH → sold 0.01 ETH (first OTC sale, later resold via Seaport 1.6 — payment likely in WETH, amount unverified) = **-1.29 ETH minimum**
+- CryptoSkulls #249: 1.30 ETH → 0.09 ETH (0.052 OTC + 0.039 WETH unwrap) = **-1.21 ETH**
 - mfer #6005: 0.50 ETH → 0.01 ETH = **-0.49 ETH**
 - IRL Psychedelics Anonymous Pass #2940: 0.13 ETH → 0.004 ETH = **-0.13 ETH**
 - XOiDs #3133: 0.08 ETH → 0.03 ETH = **-0.05 ETH**
