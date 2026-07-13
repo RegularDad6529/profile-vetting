@@ -201,3 +201,9 @@ In the collector activity section, include a line for SuperRare (NOT "SuperRarer
 
 ### 39. Don't contradict TDH with ecosystem assessment (2026-07-13)
 If a profile has significant TDH (e.g. grubnot at 1.84M TDH), do NOT say "minimal 6529 ecosystem engagement" just because they hold few 6529-specific NFTs. TDH reflects broader network activity — a high-TDH holder is deeply engaged in the 6529 ecosystem even with minimal Gradient/NextGen holdings. Report what they hold factually (e.g. "3 ecosystem items: 6529er Collection, Karen Army, 6529Complaints") and let the TDH number speak for itself.
+
+### 40. The Biggest L — worst NFT trade by P&L (2026-07-13)
+Every collector activity section must include "The Biggest L": the single NFT trade where the wallet lost the most ETH. Calculate by matching buy price (ETH out + NFT in, same block) and sell price (ETH in + NFT out, same block) for the same (contract, tokenID). P&L = sell_price - buy_price. Report the biggest loss with: collection name, token ID, buy price, sell price, P&L, and dates. Example: grubnot's biggest L = CryptoFish #733, bought 1.04 ETH → sold 0.07 ETH = -0.97 ETH. Also note if one collection dominates the losses.
+
+### 41. Failure to Transact — failed tx gas costs (2026-07-13)
+Every assessment must include "Failure to Transact": count of transactions that failed (isError='1' or txreceipt_status='0' in Blockscout v1 API) and total ETH lost to gas on those failed txs. Calculate gas lost = gasUsed × gasPrice / 1e18 for each failed tx. Report as: "X failed transactions, Y ETH lost to gas on failed txs." Example: grubnot had 19 failed txs costing 0.008 ETH. This shows how careful/sloppy a trader is with transaction construction.

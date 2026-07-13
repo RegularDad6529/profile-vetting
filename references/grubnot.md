@@ -52,6 +52,16 @@
 - Fluxeto (4 held, 5 mints)
 - 6529er Collection (2), Karen Army (1)
 
+**Foundation:** Zero activity
+**SuperRare:** 4 bought, 0 sold, 4 held
+
+### The Biggest L
+- CryptoFish #733: bought 1.04 ETH → sold 0.07 ETH = **-0.97 ETH** (Aug 2025)
+- CryptoFish dominated the losses — 4 of top 5 biggest L's were CryptoFish flips
+
+### Failure to Transact
+- 19 failed transactions, 0.008 ETH lost to gas on failed txs
+
 ### Most Flipped
 - CryptoFish (38 sold), DeadFellaz (38 sold), On-Chain All-Stars (28 sold)
 - Statix (20 sold), RENGA (9 sold), HV-MTL (7 sold), Mara (7 sold)
