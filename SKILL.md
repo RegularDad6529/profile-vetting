@@ -19,6 +19,13 @@ Run: `python3 scripts/run_assessment.py <HANDLE>`
 ### 1. 6529 Profile
 - Fetch from `GET /identities/{handle}` (NOT `/profiles/{handle}` — that returns nested objects)
 - Extract: handle, primary_wallet, wallets array, rep, level, tdh, xtdh, cic, profile_wave_id
+- **CHECK ARTIST FIELDS FIRST (2026-07-13, CRITICAL)**: Before any on-chain analysis, check:
+  - `artist_of_prevote_cards`: Array of Meme Card numbers → they are a recognized 6529 artist
+  - `winner_main_stage_drop_ids`: Array of Main Stage drop IDs → ESTABLISHED artist. Fetch each via `GET /drops/{id}` for title/ratings
+  - `is_wave_creator`: Boolean → community leadership
+  - `active_main_stage_submission_ids`: Current submissions
+  - If ANY are non-empty, the profile IS an artist. On-chain analysis is supplementary, not primary.
+  - Full methodology: `references/6529-api-artist-credentials.md`
 
 ### 2. Post Activity
 - Fetch from `GET /v2/waves/{SEEKING_NOMINATION_WAVE}/drops?limit=200`
@@ -628,7 +635,9 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 3. Check NFT flow: are NFTs going IN then OUT to many buyers? (marketplace escrow) Or accumulating? (collector)
 4. Check if NFTs return to the artist: if 7 of 9 tokens sent to a contract come back, it was a listing that didn't sell, not 9 sales.
 5. Check the end buyer: if a token does go to a real EOA, verify that EOA has no links to the artist or any suspect network.
-6. **Exclude self-transfers from ETH revenue**: Before counting "incoming ETH", check whether the sender wallet is one of the artist's own consolidated wallets (same ENS root, same 6529 identity, or known self-wallets). Self-transfers between own wallets inflate gross ETH flows dramatically. Always calculate NET art revenue = (incoming from marketplaces + incoming from independent buyers) - (self-transfers + exchange withdrawals).
+6. **Check 6529 API artist fields FIRST** (2026-07-13): Before diving into on-chain wallet analysis, check the 6529 profile for `artist_of_prevote_cards`, `winner_main_stage_drop_ids`, and `is_wave_creator`. These fields immediately establish whether someone is a recognized artist. On-chain wallet analysis is supplementary, not the primary source. Example: @arsonic was initially misclassified as "not an artist" because the on-chain review only looked at personal wallet NFT transfers and missed collaborative wallets. The 6529 API showed 2 Main Stage wins and Meme Card #37 artist credit.
+7. **Check collaborative wallets** (2026-07-13): Artists may deploy work from collaborative wallets (e.g., @zeeblocks uses ze-blocks.eth for Pebbles on NextGen 6529). If an artist mentions a duo or collective, search for the collaborative wallet and check ETH transfers between wallets for revenue sharing patterns.
+8. **Exclude self-transfers from ETH revenue**: Before counting "incoming ETH", check whether the sender wallet is one of the artist's own consolidated wallets (same ENS root, same 6529 identity, or known self-wallets). Self-transfers between own wallets inflate gross ETH flows dramatically. Always calculate NET art revenue = (incoming from marketplaces + incoming from independent buyers) - (self-transfers + exchange withdrawals).
 7. **Fetch ALL transaction pages** (2026-07-13, CRITICAL): Blockscout API paginates at 100 txs/page. Wallets with high activity can have 1,000+ txs (RD example: 1,808 txs across 18 pages). Only fetching page 1 massively undercounts ETH flows. ALWAYS loop through all pages until a page returns < 100 results. This applies to both `txlist` (ETH transfers) and `tokennfttx` (NFT transfers).
 8. **Never report gross incoming ETH as a headline number** (2026-07-13): Gross incoming ETH includes exchange withdrawals, self-transfers, and personal funds — all meaningless for artist assessment. ONLY report ETH from marketplace contracts (OpenSea/Seaport, Foundation, Manifold, SuperRare) and verified direct art sales. Categorize every incoming tx by source before reporting anything. Exchange withdrawals and self-transfers should be counted separately and excluded from art revenue. Example: RD's gross incoming was 128K ETH but art marketplace revenue was 0 ETH — the 128K was just years of exchange withdrawals.
 
@@ -640,6 +649,57 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 - SuperRare v1: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d (name: "SupeRare", symbol: SUPR) — the REAL SuperRare, NOT to be confused with Chonkly's "SuperRarer"
 - SuperRare v2: 0xB932a70A57673d89f4acFFBE830e8ED7f75fb9e0 (name: "SuperRareV2") — also real SuperRare
 - Seaport (OpenSea): 0x00000000000001adF28eF1c7D0186488931B0b94fC0
+
+### Collector Resale vs Artist Sale (2026-07-13)
+
+**PITFALL**: Marketplace payouts (Foundation, OpenSea, SuperRare) are not always artist revenue. A collector who buys an NFT and later resells it receives a marketplace payout — but that's a **collector flip**, not an **artist sale**. The ETH amount can be large (arsonic: 2,209 ETH from Foundation for reselling Inevitable Rise #6, a piece by another artist).
+
+**Rule**: Before counting a marketplace payout as artist revenue, verify the NFT being sold was created by the artist being assessed:
+1. Check which NFT was sent to the marketplace contract around the payout date
+2. Check if the NFT's contract was deployed by the artist (own contract = artist sale)
+3. Check if the NFT was minted by the artist (mint tx from artist = artist sale)
+4. If the NFT was received FROM another wallet or marketplace (purchased/collected), the subsequent sale is a **collector resale**, not artist revenue
+
+**Case Study: @arsonic Foundation payout**
+- 2,209 ETH received from Foundation v1 proxy (3 internal txs, Jun-Jul 2023)
+- Traced to Inevitable Rise #6 — sent to Foundation, then came back, then sold
+- INRISE contract (0x79ab7b1e) was NOT deployed by arsonic
+- Conclusion: 2,209 ETH is collector flip revenue, NOT artist revenue
+- Artist revenue from own contracts: 0 ETH
+
+### DeFi Internal Transaction Noise (2026-07-13)
+
+**PITFALL**: Internal transactions (`txlistinternal`) include massive ETH flows from DeFi contracts that are NOT marketplace payouts. For high-activity wallets, these can show millions of ETH in "incoming" internal txs.
+
+**Known DeFi contracts that generate internal tx noise:**
+- 0x7be8076f (OpenSea Wyvern Exchange) — NFT trading volume, not just artist payouts
+- 0x7a250d5630 (Uniswap V2 Router) — DEX swap volume
+- 0xc02aaa39b223 (WETH) — wrap/unwrap events
+- 0xe592427a (Uniswap V3) — DEX swap volume
+- 0xb47e3cd837 (CryptoPunks) — NFT trading
+
+**Rule**: When categorizing internal ETH transactions, only count as marketplace revenue if:
+1. The sender is a known marketplace payout contract (Foundation v1, Manifold, Seaport)
+2. The NFT being sold is the artist's own creation (not a collected piece being resold)
+3. The amount is consistent with art sale pricing (not DEX swap volume)
+
+All other internal txs should be categorized as "trading/DeFi activity" and excluded from art revenue.
+
+**Case Study: @arsonic internal txs**
+- 0x7be8076f (OpenSea Wyvern): 3,321,675 ETH across 53 internal txs — this is NFT trading volume, NOT art revenue
+- 0x7a250d5630 (Uniswap V2): 2,271,440 ETH — DEX swaps
+- 0xc02aaa39b223 (WETH): 1,577,687 ETH — wrap/unwrap events
+- Only 0xcda72070 (Foundation v1): 2,209 ETH was a real marketplace payout — and even that was a collector resale, not artist revenue
+
+### Collector vs Artist Classification (2026-07-13, CORRECTED)
+
+**CRITICAL**: Do NOT conclude "not an artist" based solely on wallet analysis. The @arsonic review initially said "NOT an artist — collector only" because his 4,900 NFT transfers were collector activity and his deployed contracts showed 0 transfers on Blockscout. This was **completely wrong** — he's a 2x Main Stage winner, Meme Card #37 artist, and co-creator of Pebbles (NextGen 6529).
+
+**MANDATORY**: Check 6529 API artist fields FIRST (`artist_of_prevote_cards`, `winner_main_stage_drop_ids`, `is_wave_creator`) before any wallet analysis. Also check for collaborative wallets (duo patterns where art is deployed under a separate unconsolidated wallet) and NextGen 6529 contract artist addresses.
+
+A profile can be BOTH a heavy collector AND an artist. Distinguish collector revenue (reselling others' NFTs) from artist revenue (selling own creations). Report both separately.
+
+**Full methodology + arsonic case study**: `references/6529-api-artist-credentials.md`
 
 ### Social Links in Assessments (2026-07-13, CRITICAL)
 
