@@ -62,6 +62,12 @@
 ### Failure to Transact
 - 19 failed transactions, 0.008 ETH lost to gas on failed txs
 
+### Minted: LOL
+- 70 of 181 minted NFTs sold for less than 0.005 ETH (39%)
+- Top offenders: On-Chain All-Stars (13 dumped at 0 ETH), BRKRs (5), BUILDINGS // NYC (5)
+- Most were minted and dumped same day or within weeks — pure free-mint-and-dump pattern
+- Even minted a NextGen 6529 and sold it for 0 ETH
+
 ### Most Flipped
 - CryptoFish (38 sold), DeadFellaz (38 sold), On-Chain All-Stars (28 sold)
 - Statix (20 sold), RENGA (9 sold), HV-MTL (7 sold), Mara (7 sold)
