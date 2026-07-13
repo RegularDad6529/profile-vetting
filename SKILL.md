@@ -558,6 +558,8 @@ When categorizing internal ETH transactions (txlistinternal), identify the sourc
 
 **Rule**: When reporting NFT platform participation, ALWAYS cross-check the contract address against the real platform's known address:
 - SuperRare v1: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d (name: "SupeRare", symbol: SUPR)
+- Foundation v1 marketplace proxy: 0xcda72070E455bb31C7690a170224cE43623D0B6f (name: "AdminUpgradeabilityProxy", created Jan 2021) — receives NFTs from artists for listing, distributes to buyers, pays sellers via internal transactions. NOT a collector.
+- Foundation v2: 0x3B3ee1931Dc30F20FFA2Df07F88f93C1B0b94fC0
 - Foundation: 0x3B3ee1931Dc30F20FFA2Df07F88f93C1B0b94fC0
 - OpenSea (Seaport): 0x00000000000001adF28eF1c7D0186488931B0b94fC0
 
@@ -607,6 +609,14 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 3. Check NFT flow: are NFTs going IN then OUT to many buyers? (marketplace escrow) Or accumulating? (collector)
 4. Check if NFTs return to the artist: if 7 of 9 tokens sent to a contract come back, it was a listing that didn't sell, not 9 sales.
 5. Check the end buyer: if a token does go to a real EOA, verify that EOA has no links to the artist or any suspect network.
+
+**Known marketplace contract addresses (for buyer wallet identification):**
+- Foundation v1 proxy: 0xcda72070E455bb31C7690a170224cE43623D0B6f (AdminUpgradeabilityProxy, created Jan 2021) — escrows NFTs for listing, pays sellers via internal txs
+- Foundation v2: 0x3B3ee1931Dc30F20FFA2Df07F88f93C1B0b94fC0
+- Manifold ERC1155LazyPayableClaim: 0x44e94034afce2dd3cd5eb62528f239686fc8f162 — pays artists for edition drops
+- Manifold ERC721LazyPayableClaim: 0x7581871e1c11f85ec7f02382632b8574fad11b22 — pays artists for ERC721 drops
+- SuperRare v1: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d (name: "SupeRare", symbol: SUPR) — the REAL SuperRare, NOT to be confused with Chonkly's "SuperRarer"
+- Seaport (OpenSea): 0x00000000000001adF28eF1c7D0186488931B0b94fC0
 
 ### Social Links Verification (2026-07-13, CRITICAL)
 
