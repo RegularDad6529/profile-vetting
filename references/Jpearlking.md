@@ -25,7 +25,7 @@
 - 2026-03-29: 0.0950 ETH (OpenSea/Seaport proxy)
 
 ### Contract-routed sales (artist's own contracts): 17 txs, 0.32 ETH — THESE ARE SALES
-- 14 from SuperRarer (own deployed contract): 0.25 ETH — contract forwards sale proceeds when buyer purchases
+- 14 from SuperRarer (Chonkly platform contract, NOT SuperRare): 0.25 ETH — contract forwards sale proceeds when buyer purchases
 - 3 from Manifold ERC1155LazyPayableClaim: 0.066 ETH — claim contract payouts from NFT purchases
 
 ### Direct sale: 1 tx, 0.01 ETH
@@ -39,7 +39,7 @@
 - 2022: 5 sales, 1.82 ETH (strongest year)
 - 2023: 4 sales, 0.09 ETH (3 Manifold + 1 direct)
 - 2024-2025: NO SALES (~2-year gap)
-- 2026: 16 sales, 0.34 ETH (14 SuperRarer + 2 OpenSea)
+- 2026: 16 sales, 0.34 ETH (14 SuperRarer [Chonkly] + 2 OpenSea)
 
 ## Collectors
 14 unique collectors (excl burn + marketplace escrow):
@@ -47,16 +47,16 @@
 - 12 external wallets, no 6529 profile
 
 ## Artwork
-- SuperRare: 56 mints (primary platform)
+- SuperRarer (Chonkly platform, NOT SuperRare): 56 mints — contract 0xc360ceca, deployed by chonkly.eth, NOT by Jpearlking. NOT indexed on OpenSea.
 - Safe Haven: 98 mints (own collection, 14 collectors)
-- 5 deployed contracts (3 NFT minting, 2 TL Universal Deployers)
+- 5 deployed contracts (RARE, LUMI, Safe Haven, 2 TL Universal Deployers)
 - Hand-made, no AI detected
-- Examples: "Zen Pepe", "Chonkly Pepe Party", "Chonkly"
+- Examples: "Zen Pepe", "Chonkly Pepe Party", "Chonkly" (all on SuperRarer/Chonkly)
 
 ## Strengths
 1. 4.5-year track record with real OpenSea sales (2.02 ETH)
 2. 5 deployed contracts — technical capability
-3. Multi-platform: SuperRare, Foundation, OpenSea, TL
+3. Multi-platform: OpenSea, Manifold, Transient Labs (NOT SuperRare — SuperRarer is Chonkly)
 4. Verified socials, hand-made artwork
 
 ## Concerns
@@ -70,5 +70,6 @@
 - After internal tx fix: 2.34 ETH / 27 sales (overcorrected — counted exchange withdrawals as sales)
 - Manual analysis (2026-07-12): 8 real sales / 2.02 ETH (excluded contract-routed AND exchange)
 - RD correction (2026-07-13): Contract-routed ETH from own contracts ARE sales — corrected to 25 sales / 2.34 ETH
+- SuperRarer correction (2026-07-13): "SuperRare: 56 mints" was WRONG. All 56 mints are on "SuperRarer" (0xc360ceca), a Chonkly platform contract named to mimic SuperRare. Deployed by chonkly.eth, NOT by Jpearlking. NOT indexed on OpenSea. Zero real SuperRare transfers. Strengths updated to remove "SuperRare" from multi-platform list.
 
 Full feedback version: references/Jpearlking-feedback.md

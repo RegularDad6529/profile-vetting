@@ -6,7 +6,7 @@
 | @Papillon | ESTABLISHED | 2026-07-11 | 151 sales (41.28 ETH), 151 collectors, SuperRare photographer |
 | @sonyart | ESTABLISHED | 2026-07-11 | 58 sales (11.36 ETH), 9 contracts, 77 collectors, 218 SN posts |
 | @MahsaAli | LIKELY REAL | 2026-07-11 | 57 sales (4.40 ETH), 5 years, hand-made digital paintings |
-| @Jpearlking | LIKELY REAL w/ concerns | 2026-07-13 | 25 sales (2.34 ETH), SuperRare 56x, 5 contracts, 14 collectors, 2yr sales gap |
+| @Jpearlking | LIKELY REAL w/ concerns | 2026-07-13 | 25 sales (2.34 ETH), SuperRarer 56x [Chonkly, NOT SuperRare], 5 contracts, 14 collectors, 2yr sales gap |
 | @Chumwizards | LIKELY REAL | 2026-07-11 | 61 sales (0.50 ETH), 48 collectors, 5 social links, 180-day wallet |
 | @Superno | LIKELY REAL | 2026-07-12 | 490 mints, 20 contracts, ~7 real collectors, 4 sales (0.29 ETH), 289-day wallet |
 | @Shakirastract | LIKELY REAL (newcomer) | 2026-07-11 | Base chain only, hand-made StarDust art, 7 mints, 1 sale |
@@ -43,8 +43,9 @@
 6. Blockscout 403: Added User-Agent header
 7. Collector count: Exclude marketplace contracts and burn address from `unique_collectors`
 8. Sales categorization (2026-07-13): Contract-routed ETH from artist's OWN contracts (SuperRarer, Manifold) = sales. Only exchange withdrawals excluded. Jpearlking corrected from 8 sales/2.02 ETH to 25 sales/2.34 ETH.
-9. Community wave check (2026-07-13): Always check maybe's dive bar for engagement before reporting "zero 6529 engagement"
-10. Rep categories API (2026-07-13): `GET /profiles/{id}/rep/categories` reveals rep contributors and detects deconsolidation/reconsolidation
+9. SuperRarer ≠ SuperRare (2026-07-13, CRITICAL): "SuperRarer" (0xc360ceca, symbol SRR) is a Chonkly platform contract, NOT SuperRare (0x41A322, symbol SUPR) or SuperRareV2 (0xB932a7). Deployed by chonkly.eth. NOT indexed on OpenSea. Jpearlking and Beam assessments corrected — both had zero real SuperRare transfers. Papillon uses real SuperRareV2 (confirmed legitimate).
+10. Community wave check (2026-07-13): Always check maybe's dive bar for engagement before reporting "zero 6529 engagement"
+11. Rep categories API (2026-07-13): `GET /profiles/{id}/rep/categories` reveals rep contributors and detects deconsolidation/reconsolidation
 
 ## Cross-Profile Methodology (added 2026-07-12)
 - Blockscout v2 with filter params returns 422 — use v1 API (`txlist` + `txlistinternal`)

@@ -46,7 +46,7 @@ All incoming ETH was categorized by source. Exchange withdrawals (Binance/Coinba
 
 These are ETH payments routed through the artist's own contracts and platform contracts — sale proceeds and payouts forwarded to the artist wallet:
 
-- **SuperRarer** (artist's own deployed contract): 14 transactions, 0.25 ETH (Feb–Apr 2026)
+- **SuperRarer** (Chonkly platform contract, NOT SuperRare): 14 transactions, 0.25 ETH (Feb–Apr 2026). Contract 0xc360ceca deployed by chonkly.eth, not by Jpearlking. NOT indexed on OpenSea.
 - **Manifold ERC1155LazyPayableClaim**: 3 transactions, 0.066 ETH (Jan–Feb 2023)
 
 ### Direct Sale (1 transaction, 0.01 ETH)
@@ -66,25 +66,27 @@ ETH withdrawn from Binance and Coinbase to the artist's wallet. Personal funds, 
 - **2022**: 5 sales, 1.82 ETH (strongest year — includes 0.76 and 0.53 ETH sales)
 - **2023**: 4 sales, 0.09 ETH (3 Manifold claims + 1 direct)
 - **2024–2025**: No sales (2-year gap)
-- **2026**: 16 sales, 0.34 ETH (14 SuperRarer contract + 2 OpenSea)
+- **2026**: 16 sales, 0.34 ETH (14 SuperRarer [Chonkly] + 2 OpenSea)
 
 ## Artistic Output
 
 ### Collections Deployed
 1. **Safe Haven** — Primary collection, 98 mints
-2. **SuperRarer** — Contract deployed on Ethereum, 56 mints via SuperRare platform
+2. **SuperRarer** — 56 mints on Chonkly platform (contract 0xc360ceca, deployed by chonkly.eth, NOT by Jpearlking). NOT indexed on OpenSea.
 3. Additional contracts via Transient Labs Universal Deployer
 
 ### Platforms Used
-- **SuperRare**: 56 mints (primary platform for artwork)
+- **OpenSea/Seaport**: 7 sales (2.01 ETH, primary sales platform)
+- **Manifold**: 3 edition drop sales (0.066 ETH)
+- **Chonkly (SuperRarer)**: 14 sales (0.25 ETH, platform operator purchases)
 - **Doorways and Escape**: 7 mints
 - **Safe Haven**: 5 mints (own contract)
-- Listed on OpenSea (Seaport/Wyvern), TL Auction House
+- Listed on TL Auction House
 
 ### Artwork Examples
-- "Zen Pepe" (SuperRare)
-- "Chonkly Pepe Party" (SuperRare)
-- "Chonkly" (SuperRare)
+- "Zen Pepe" (SuperRarer/Chonkly)
+- "Chonkly Pepe Party" (SuperRarer/Chonkly)
+- "Chonkly" (SuperRarer/Chonkly)
 
 Hand-made digital artwork — no AI generation detected.
 
@@ -101,7 +103,7 @@ The artist has an existing collector base outside 6529. This is worth considerin
 
 - **Sold**: 25 NFTs (7 via OpenSea/Seaport, 17 via own contracts/platforms, 1 direct)
 - **Listed**: 36 NFT listings (21 on own minting contract, 8 auctions, 3 on TL Auction House)
-- **Purchased**: 2 NFTs on SuperRare (collecting other artists' work)
+- **Purchased**: 2 NFTs (collecting other artists' work)
 - **Drop configurations**: 12 (created collections, set royalties, configured drops)
 
 ## Strengths
@@ -109,7 +111,7 @@ The artist has an existing collector base outside 6529. This is worth considerin
 1. **Long track record** — 4.5 years of on-chain activity, wallet active since Feb 2022
 2. **Real sales history** — 25 sales totaling 2.34 ETH across OpenSea, own contracts, and Manifold
 3. **5 deployed contracts** — Technical capability and commitment to building own collections
-4. **Multi-platform presence** — SuperRare, Foundation, OpenSea, Transient Labs
+4. **Multi-platform presence** — OpenSea, Manifold, Transient Labs, Chonkly
 5. **Hand-made artwork** — No AI generation detected
 6. **Verified social links** — X, OpenSea, Foundation, and email all publicly linked
 7. **Existing collector base** — 14 collectors, with potential to bring external audience into 6529
@@ -117,8 +119,9 @@ The artist has an existing collector base outside 6529. This is worth considerin
 ## Concerns
 
 1. **Sales gap** — No sales between mid-2023 and early-2026 (approximately 2-year gap). The strongest sales were all in 2022.
-2. **Declining sale prices** — 2022 sales averaged 0.36 ETH; 2026 sales are much smaller (0.02 ETH average via SuperRarer contract, 0.095 ETH via OpenSea)
+2. **Declining sale prices** — 2022 sales averaged 0.36 ETH; 2026 sales are much smaller (0.02 ETH average via SuperRarer/Chonkly, 0.095 ETH via OpenSea)
 3. **Limited 6529 engagement** — Only 3 posts on Seeking Nomination, 1 reaction received, no profile wave posts
+4. **SuperRarer is Chonkly, not SuperRare** — 56 mints and 14 sales (0.25 ETH) are on Chonkly's "SuperRarer" contract (0xc360ceca), NOT the real SuperRare platform. This contract is not indexed on OpenSea. The earlier version of this review incorrectly attributed these to SuperRare.
 
 ## Bottom Line
 
