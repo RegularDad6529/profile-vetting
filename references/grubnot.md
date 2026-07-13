@@ -63,10 +63,12 @@
 - 19 failed transactions, 0.008 ETH lost to gas on failed txs
 
 ### Minted: LOL
-- 70 of 181 minted NFTs sold for less than 0.005 ETH (39%)
-- Top offenders: On-Chain All-Stars (13 dumped at 0 ETH), BRKRs (5), BUILDINGS // NYC (5)
-- Most were minted and dumped same day or within weeks — pure free-mint-and-dump pattern
-- Even minted a NextGen 6529 and sold it for 0 ETH
+- 37 NFTs they PAID to mint, then sold for less than 0.005 ETH
+- Total spent minting: 3.33 ETH. Total received from selling: 0.00 ETH. Net loss: 3.33 ETH
+- Worst: Invisible Friends #3826 (paid 0.25 ETH → sold for 0 ETH)
+- Also: 2x Eventually IF Physical Collectibles (0.18 ETH each → 0 ETH), 2x EyesofFashionNFT (0.16 ETH each → 0 ETH)
+- 3x BUILDINGS // NYC (0.127 ETH each → 0 ETH, dumped same day Jun 2026)
+- 33 additional free mints also dumped for dust
 
 ### Most Flipped
 - CryptoFish (38 sold), DeadFellaz (38 sold), On-Chain All-Stars (28 sold)
