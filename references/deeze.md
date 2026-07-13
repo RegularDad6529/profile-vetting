@@ -18,12 +18,32 @@
 - "Burnt Boy by Deeze x Goonz" — collaboration with Goonz (contract deployed by Goonz, not deeze). 11 mints, kept 9, sold 3.
 - No other artist output
 
+## Wave Activity
+- maybe's dive bar: 4 posts
+- Sonya's Magical Realm: 1 post
+- CuttleWave: 1 post
+- 6529 Tech Feedback: 1 post
+- Shillandia: 1 post
+- Sherie's Work Archive: 1 post
+- Movie Gul: 1 post
+- All 10 posts from today (July 13, 2026) — just started engaging
+
 ## Collector Activity
 - 4,163 NFT transfers
 - 1,437 mints from 0x0 across 537 unique public contracts — massive free mint / public mint collector
 - 1,256 received from others
 - ~1,223 NFTs currently held
 - 587 unique collections
+
+### Top 3 Most Expensive Purchases
+1. Skulls of Luci #45 — 62.00 ETH — May 2, 2023
+2. Moonbirds #3315 — 34.00 ETH — Apr 25, 2022
+3. CloneX #13548 — 34.00 ETH — Apr 24, 2022
+
+### Top 3 Most Expensive Sales
+1. Moonbirds #7237 — 38.56 ETH — Apr 22, 2022
+2. Moonbirds #3810 — 37.92 ETH — Apr 23, 2022
+3. Nouns #329 — 33.99 ETH — Dec 16, 2022
 
 ### Notable collections (by net held)
 - CryptoTitVags (84 held, 170 minted, 86 sold — heavy flipping)
@@ -57,6 +77,7 @@
 - 0 deployed contracts — not a contract creator
 - Massive free/public mint farmer (1,437 mints from 537 contracts)
 - Heavy flipper — most collections have high sell counts
+- Active trader during 2022 bull market (Moonbirds, CloneX at 34 ETH each)
 - "Burnt Boy by Deeze x Goonz" is a named collaboration but contract was deployed by Goonz, not deeze
 - Zero 6529 ecosystem holdings despite being on the 6529 platform
 - No wash trading or suspicious patterns
