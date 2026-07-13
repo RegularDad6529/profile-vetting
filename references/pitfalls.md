@@ -105,16 +105,19 @@ Example: Pebbles (collection 1) = ze-blocks.eth, 1000 supply, CC0, zeblocks.com
 Profile wave drops can be fetched via `GET /waves/{profile_wave_id}/drops` to see what the artist has posted on their own wave.
 
 ## Known Marketplace Contract Addresses
-- Foundation v1 proxy: 0xcda72070e455bb31c7690a170224ce43623d0b6f (AdminUpgradeabilityProxy, Jan 2021)
+- Foundation v1 proxy: 0xcda72070e454bb84c756f75bb72993fbe416b69b (AdminUpgradeabilityProxy, Jan 2021)
 - Foundation v2: 0x3B3ee1931dc30F20fFa2dF07F88F93C1B0b94FC0
 - Manifold ERC1155: 0x44e94034afce2dd3cd5eb62528f239686fc8f162
 - Manifold ERC721: 0x7581871e1c11f85ec7f02382632b8574fad11b22
 - SuperRare v1: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d
 - SuperRare v2: 0xB932a70A57673d89f4acffBE830e8ed7f75fb9e0
-- Seaport: 0x00000000000001adf28ef1c7d0186488931b0b94fc0
+- Seaport 1.6: 0x00000000000001adF28D0aCDeB0B5b31601b3b0d
+- Seaport 1.5: 0x0000000000000068F116a894984e2DB1123eB395
 - OpenSea Wyvern: 0x7be8076f4ea4b96b62c43e4a9c3a3b87e2f7c1f2
 - Chonkly SuperRarer (NOT SuperRare): 0xc360ceca69988e39be18ddb89e69afcc33a3833a
 - Chonkly: 0x235f18021160bcd312c65496df1caf2b9ce5904d
+- Art Blocks main (GenArt721Core): 0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270
+- Art Blocks Explorations: 0x942bc2d3e7a589fe5bd4a5c6ef9727dfd82f5c8a
 
 ## Key 6529 API Endpoints
 - `GET /identities/{handle}` — profile with artist fields, wallets, rep
@@ -260,3 +263,20 @@ When matching ETH out to NFT mints in the same block, if multiple NFTs were mint
 Calculate: count all NFT transfers from 0x0 to the wallet in the same (blockNumber, contractAddress) pair. Divide the max ETH out in that block by that count. Same applies to purchases and sales — if multiple NFTs were bought/sold in the same block, split the ETH accordingly.
 
 Example: RegularDad minted 3 BUILDINGS // NYC (#783, #784, #785) in one block for 0.0477 ETH total. Per-mint cost = 0.0159 ETH, not 0.0477 ETH. Without splitting, the Biggest L showed -0.035 ETH; with splitting it's -0.003 ETH. Same for On-Chain All-Stars: 3 minted for 0.06 ETH = 0.02 each. Also affected Biggest Wins: gristle buddeez 3 minted for 0.14 ETH = 0.047 each, making the win +0.23 ETH instead of +0.13 ETH.
+
+### 47. Seaport pays ETH via internal txs, not regular transfers (2026-07-13)
+When matching sale prices (ETH incoming for NFT outgoing), Seaport marketplace sales often pay the seller via an INTERNAL transaction, not a regular ETH transfer. The internal tx comes from the Seaport contract address (e.g. 0x0000000000000068f1... for Seaport 1.5). If you only check `txlist` (regular txs) for incoming ETH in the sale block, you'll miss the payment and incorrectly classify the sale as a transfer/gift. ALWAYS check `txlistinternal` in addition to `txlist` for sale matching. This is why pitfall #32 says "regular txlist + internal txlistinternal" — both are required.
+
+Example: RegularDad's BUILDINGS // NYC #785 sale — the 0.0129 ETH payment came as an internal tx from 0x0000000000000068f116a894984e2db1123eb395 (Seaport 1.5). The regular `txlist` showed zero ETH incoming in that block. Without checking internal txs, the sale was missed entirely and the P&L was wrong.
+
+### 48. Etherscan v1 API is deprecated — use v2 (2026-07-13)
+Etherscan v1 endpoints (`api.etherscan.io/api?module=...`) return "You are using a deprecated V1 endpoint". Use v2: `api.etherscan.io/v2/api?chainid=1&module=...`. The v2 API requires `chainid=1` for Ethereum mainnet. All other params are the same as v1. An API key is still required for reliable access — set via ETHERSCAN_API_KEY env var.
+
+### 49. Art Blocks API is down — use known project ID mappings (2026-07-13)
+The Art Blocks token API (`token.artblocks.io/project/{id}` and `token.artblocks.io/token/{id}`) returns 400 for all requests as of July 2026. The v2 API (`api.artblocks.io`) also returns 500. When looking up Art Blocks project names and artists, use known mappings instead. Art Blocks token IDs encode the project: `project = tokenId // 1000000`. See `references/art-blocks-projects.md` for a lookup table of known project IDs to names and artists.
+
+### 50. No subjective commentary on Biggest L / Biggest Wins (2026-07-13)
+Report the numbers only for Biggest L and Biggest Wins. Do not add editorializing like "moderate, not catastrophic" or "relatively disciplined" — what's a big loss for one person is nothing for another. Just show the ETH amounts and let the reader judge.
+
+### 51. Do not call low-cost mints "free mints" (2026-07-13)
+A mint that cost 0.007 ETH is a PAID mint, not a free mint. Free mint = 0 ETH cost. Any non-zero ETH paid to mint is a paid mint, regardless of how small the amount. Do not label purchases as "free mint flips" when ETH was paid.

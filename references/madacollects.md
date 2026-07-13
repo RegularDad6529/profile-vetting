@@ -43,7 +43,7 @@
 
 ### Biggest Wins
 - Valhalla #6129: bought 0.98 ETH → sold 2.05 ETH = **+1.08 ETH**
-- Checks #535: bought 0.007 ETH → sold 0.92 ETH = **+0.91 ETH** (massive free-mint flip)
+- Checks #535: bought 0.007 ETH → sold 0.92 ETH = **+0.91 ETH**
 - Valhalla #6278: bought 0.56 ETH → sold 1.20 ETH = **+0.64 ETH**
 - Kitaro World #7582: bought 0.09 ETH → sold 0.66 ETH = **+0.57 ETH**
 - Valhalla #5675: bought 0.77 ETH → sold 1.33 ETH = **+0.57 ETH**
@@ -94,9 +94,9 @@
 - Active since April 2022 — entered during the bear market start
 - 54 failed transactions (0.15 ETH lost) — moderate failure rate
 - Valhalla was their best flip pattern — 3 out of top 5 wins
-- Checks flip was exceptional (+0.91 ETH from 0.007 ETH free mint)
+- Checks flip was exceptional — 0.007 ETH → 0.92 ETH
 - Biggest purchase (Opepen at 6 ETH) is 3x their biggest sale (Valhalla at 2.05 ETH)
 - Zero Foundation or SuperRare activity — pure collector, no art platform involvement
-- 83% of held collections are dead, but total dead-bag spend is only 1.59 ETH — relatively disciplined
+- 83% of held collections are dead, total dead-bag spend is 1.59 ETH
 - No deployed contracts, no MS submissions — collector/community member, not an artist
 - 309 mints total — active minter, mostly free mints
