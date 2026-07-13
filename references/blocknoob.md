@@ -41,13 +41,13 @@
 ## Collector Activity
 - 2,667 total NFT transfers across all 8 wallets
 - 307 unique collections
-- Foundation: 367 tokens (major secondary market participant — buying and reselling)
-- Avastar: 361, Lore: 112, Art Blocks: 95, TinyBoxes: 86
-- Goofy Oversized Optics People: 73, LordsOfLightPacks: 54, Dreamloops V1: 47
-- Real SuperRare: 4 tokens (collecting)
-- Zero SuperRarer/Chonkly exposure
 
-### Notable collections (by volume and significance)
+### Foundation
+- 150 bought, 84 sold, 66 still held
+- Active secondary market participant (primarily 2021 bull market era)
+- Net position is negative (more spent acquiring than received from reselling)
+
+### Notable collections
 - **Foundation** (367) — one of the most active Foundation collectors/resellers
 - **Avastar** (361) — early NFT project
 - **Art Blocks** (95) — generative art collector
@@ -55,10 +55,10 @@
 - **6529 Gradient** (15) — 6529 ecosystem
 - **Cryptoadz** (15), **August Sander 10K** (15) — established collections
 - **SuperRare** (4) — real SuperRare collecting
+- Zero SuperRarer/Chonkly exposure
 
 ## On-Chain Notes
 - blocknoob.eth (original wallet) is NOT in the 6529 consolidated profile — it holds the majority of his activity (1,692 of 2,667 NFT transfers)
-- 191K ETH in Foundation payouts is collector resale volume, not artist revenue — 0 NFTs minted by blocknoob on Foundation
 - 2 deployed contracts exist but unused — no NFT mints to collectors
 - No wash trading or suspicious patterns detected
 - Zero exposure to unindexed/knockoff platforms
@@ -70,6 +70,5 @@
 ## Notes
 - blocknoob is primarily a collector whose artist output lives on 6529 (2 Main Stage wins)
 - The 6529 profile's 3-wallet cap misses his original and most active wallet (blocknoob.eth)
-- Foundation revenue (191K ETH) is gross collector resale volume — 0 artist revenue
 - Operates multiple ENS names for different purposes (complaints/meme operations, giveaways, crypto)
 - "noobmuseum" naming suggests a curatorial/museum approach to collecting
