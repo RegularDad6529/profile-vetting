@@ -323,6 +323,7 @@ Fetch ALL token holders (`?module=token&action=getTokenHolders`, iterate pages) 
 - **Conclusion**: Small-platform bootstrap pattern. The operator buys from artists to create sale history. Artists are real platform users who found 6529 independently over 14+ months.
 - **How to find platform website**: Check contract source code for base URI string. Chonkly contract had `_baseTokenURI = "https://chonkly.com/api/metadata/"`. SuperRarer had `"https://your-api.com/metadata/"` (placeholder, updated on-chain). Use Blockscout v2 smart-contracts endpoint to get source code.
 - **BRAND MIMICRY (2026-07-13)**: The SuperRarer contract name is a deliberate near-clone of SuperRare (real platform: "SupeRare" 0x41A322b, knockoff: "SuperRarer" 0xc360ceca — one extra 'r'). This inflates artists' perceived credentials when they or others say "I sell on SuperRare." ALWAYS verify the actual contract address when a vetting script reports SuperRare activity. The @beam assessment initially reported "55 SuperRare mints" — all were on the knockoff, zero on real SuperRare. This contributed to a LIKELY_REAL classification that should have been BORDERLINE. See bug #14 above.
+- **VERIFIED ACROSS ALL 13 PROFILES (2026-07-13)**: Systematic check confirmed ZERO real SuperRare transfers across all 13 Chonkly-connected 6529 profiles. 12 of 13 have SuperRarer tokens only. Any previous assessment attributing "SuperRare mints" to any Chonkly artist was wrong.
 - **Full platform reference**: `references/chonkly-platform.md` (platform details, contract info, investigation methods, artist mapping, `created_at` vs real timeline)
 
 ### Scripts Inventory
@@ -399,6 +400,8 @@ When RD asks for a review to share with an artist as feedback, write it as a sta
 - Bottom Line (classification + key takeaway)
 
 **Do NOT include internal analysis details** (script names, API endpoints, debugging notes). The feedback document is for the artist to read.
+
+**Tone (RD directive 2026-07-13)**: Feedback documents must be nonjudgmental. State facts, not opinions about motives. Do NOT say "community members gave rep without researching" or "social links may be fake." Present what exists and what doesn't — let the reader draw conclusions. Social links are noted as present, not scored. Rep concentration is stated as a percentage, not characterized as "narrow" or "unresearched."
 
 Example: `references/Jpearlking-feedback.md`
 
@@ -557,19 +560,35 @@ When categorizing internal ETH transactions (txlistinternal), identify the sourc
 **PITFALL**: Always verify contract ADDRESSES, not just names. A contract named "SuperRarer" (one extra 'r') was mistaken for "SuperRare" (the major curated platform) in the @beam assessment. This inflated the artist's perceived credentials — "55 SuperRare mints" was actually 36 mints on a Chonkly knockoff contract with micro-priced sales to the platform operator.
 
 **Rule**: When reporting NFT platform participation, ALWAYS cross-check the contract address against the real platform's known address:
-- SuperRare v1: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d (name: "SupeRare", symbol: SUPR)
+- SuperRare v1: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d (name: "SupeRare", symbol: SUPR) — 1,195 holders
+- SuperRare v2: 0xB932a70A57673d89f4acFFBE830e8ED7f75fb9e0 (name: "SuperRareV2") — Papillon confirmed using this
 - Foundation v1 marketplace proxy: 0xcda72070E455bb31C7690a170224cE43623D0B6f (name: "AdminUpgradeabilityProxy", created Jan 2021) — receives NFTs from artists for listing, distributes to buyers, pays sellers via internal transactions. NOT a collector.
 - Foundation v2: 0x3B3ee1931Dc30F20FFA2Df07F88f93C1B0b94fC0
+- OpenSea (Seaport): 0x00000000000001adF28eF1c7D0186488931B0b94fC0
 - Foundation: 0x3B3ee1931Dc30F20FFA2Df07F88f93C1B0b94fC0
 - OpenSea (Seaport): 0x00000000000001adF28eF1c7D0186488931B0b94fC0
 
 If a contract name is a near-clone of a known platform (extra letter, similar spelling), flag it as brand mimicry and do NOT count it as participation in the real platform.
+
+**Systematic cross-check rule (2026-07-13)**: When contract name mimicry is discovered for one profile, IMMEDIATELY check ALL profiles known to be on that contract. In the Chonkly case, discovering SuperRarer ≠ SuperRare for @beam led to checking all 13 Chonkly-connected profiles — ALL 12 with SuperRarer tokens had zero real SuperRare. @Jpearlking's assessment also said "SuperRare: 56 mints" — all were SuperRarer. One discovery should trigger a sweep of all affected assessments.
 
 **Case Study: @beam SuperRarer confusion**
 - Initial assessment: "55 SuperRare mints" → LIKELY_REAL
 - Reality: Zero SuperRare transfers. All 36 mints on "SuperRarer" (0xc360ceca), a Chonkly contract named to mimic SuperRare
 - Impact: Classification downgraded from LIKELY_REAL to BORDERLINE
 - Lesson: The extra 'r' in "SuperRarer" vs "SuperRare" was the difference between "established artist on major platform" and "artist on unknown micro-platform with brand-squatting contract name"
+
+**Case Study: @Jpearlking SuperRarer confusion (2026-07-13)**
+- Assessment said "SuperRare: 56 mints (primary platform)" and listed "Multi-platform: SuperRare, Foundation, OpenSea, TL" as a strength
+- Reality: Zero real SuperRare transfers. All 56 mints on SuperRarer (0xc360ceca). Contract deployed by chonkly.eth, NOT by Jpearlking.
+- Assessment also said SuperRarer was "artist's own deployed contract" — WRONG. chonkly.eth deployed it.
+- Impact: Multi-platform strength weakened. 14 SuperRarer sales (0.25 ETH) recontextualized as Chonkly operator micro-sales, not SuperRare sales.
+- Lesson: Same misattribution can affect multiple profiles on the same contract. Always sweep.
+
+**Case Study: @Papillon — confirmed REAL SuperRare (2026-07-13)**
+- Assessment said "SuperRare photographer" with superrare.com profile link
+- Verification: Papillon mints on SuperRareV2 (0xB932a7) — the REAL SuperRare v2 contract. 20 transfers confirmed.
+- Lesson: The contract address check works both ways — it confirms real platform participation too, not just catching knockoffs. Papillon's SuperRare references are legitimate.
 
 ### OpenSea Indexing Check (2026-07-13, CRITICAL)
 
@@ -609,6 +628,7 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 3. Check NFT flow: are NFTs going IN then OUT to many buyers? (marketplace escrow) Or accumulating? (collector)
 4. Check if NFTs return to the artist: if 7 of 9 tokens sent to a contract come back, it was a listing that didn't sell, not 9 sales.
 5. Check the end buyer: if a token does go to a real EOA, verify that EOA has no links to the artist or any suspect network.
+6. **Exclude self-transfers from ETH revenue**: Before counting "incoming ETH", check whether the sender wallet is one of the artist's own consolidated wallets (same ENS root, same 6529 identity, or known self-wallets). Self-transfers between own wallets inflate gross ETH flows dramatically. Always calculate NET art revenue = (incoming from marketplaces + incoming from independent buyers) - (self-transfers + exchange withdrawals).
 
 **Known marketplace contract addresses (for buyer wallet identification):**
 - Foundation v1 proxy: 0xcda72070E455bb31C7690a170224cE43623D0B6f (AdminUpgradeabilityProxy, created Jan 2021) — escrows NFTs for listing, pays sellers via internal txs
@@ -616,18 +636,19 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 - Manifold ERC1155LazyPayableClaim: 0x44e94034afce2dd3cd5eb62528f239686fc8f162 — pays artists for edition drops
 - Manifold ERC721LazyPayableClaim: 0x7581871e1c11f85ec7f02382632b8574fad11b22 — pays artists for ERC721 drops
 - SuperRare v1: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d (name: "SupeRare", symbol: SUPR) — the REAL SuperRare, NOT to be confused with Chonkly's "SuperRarer"
+- SuperRare v2: 0xB932a70A57673d89f4acFFBE830e8ED7f75fb9e0 (name: "SuperRareV2") — also real SuperRare
 - Seaport (OpenSea): 0x00000000000001adF28eF1c7D0186488931B0b94fC0
 
-### Social Links Verification (2026-07-13, CRITICAL)
+### Social Links in Assessments (2026-07-13, CRITICAL)
 
-**PITFALL (RD correction)**: Social links (X, Instagram, email) can be fake. Do NOT treat the mere existence of social links as a strong positive signal. An X account with 0 followers and 0 tweets, or an Instagram with no posts, is not meaningful verification.
+**RD directive**: Social links (X, Instagram, email) should be noted as present in the assessment — that's it. Do NOT frame them as positive (verified, matching persona) or negative (unverified, possibly fake). We cannot verify social link authenticity from the server, so they are neutral information, not a signal in either direction.
 
-**Rule**: When evaluating social links:
-- Check for actual content (tweets, posts, followers) — not just that the profile exists
-- Cross-reference the bio/content with the artist persona — does it match?
-- A social account created recently with no following/followers is a weak signal
-- Social links should be ONE factor among many, not a deciding factor
-- If the only positive signals are "has social links" + "wallet is old", that's not enough for LIKELY_REAL
+**Rule**: When listing social links in an assessment:
+- Note what links exist (platform, handle)
+- Do NOT add "verified" or "unverified" or "may be fake"
+- Do NOT count social links as a strength or a concern
+- Do NOT include them in the "Why LIKELY_REAL" or "Why SUSPICIOUS" reasoning
+- They are factual profile data, like the wallet address — present but not scored
 
 ### Single-Buyer Concentration (2026-07-13, REINFORCED)
 
@@ -846,6 +867,16 @@ Exchange.art has no documented public API. The frontend is a JavaScript SPA (Ang
 2. Do NOT include raw scam token names in any output format
 3. This applies to terminal output, summaries, tables, and prose
 4. When in doubt, strip to ASCII-only or omit
+
+### Assessment Tone and Neutrality (2026-07-13, RD CORRECTIONS)
+
+**PITFALL**: RD corrected two judgmental framings in the @beam assessment:
+
+1. **Social links**: Do NOT frame social links as positive ("matching the artist persona") or negative ("may be fake", "unverified"). Social links are NEUTRAL DATA — note their presence, nothing more. We cannot verify authenticity from the server, so we should not score them in either direction. State: "Social links present (X, Instagram, email) — noted but not assessed for authenticity."
+
+2. **Community rep motives**: Do NOT characterize why community members gave rep. Saying "rep from community being nice without researching" is judgmental on our part — we don't know why people gave rep. State the facts only: "86% from one supporter" or "narrow support base." Do not speculate about community members' research process or motives.
+
+**RULE**: Assessments should be factual and non-judgmental. Report what is observable (rep concentration percentages, social link existence) without speculating about motives, research depth, or authenticity that we can't verify. Leave conclusions to RD.
 
 ### Self-Contradiction Pitfall (2026-07-13)
 
