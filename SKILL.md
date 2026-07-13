@@ -629,6 +629,7 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 4. Check if NFTs return to the artist: if 7 of 9 tokens sent to a contract come back, it was a listing that didn't sell, not 9 sales.
 5. Check the end buyer: if a token does go to a real EOA, verify that EOA has no links to the artist or any suspect network.
 6. **Exclude self-transfers from ETH revenue**: Before counting "incoming ETH", check whether the sender wallet is one of the artist's own consolidated wallets (same ENS root, same 6529 identity, or known self-wallets). Self-transfers between own wallets inflate gross ETH flows dramatically. Always calculate NET art revenue = (incoming from marketplaces + incoming from independent buyers) - (self-transfers + exchange withdrawals).
+7. **Fetch ALL transaction pages** (2026-07-13, CRITICAL): Blockscout API paginates at 100 txs/page. Wallets with high activity can have 1,000+ txs (RD example: 1,808 txs across 18 pages). Only fetching page 1 massively undercounts ETH flows. ALWAYS loop through all pages until a page returns < 100 results. This applies to both `txlist` (ETH transfers) and `tokennfttx` (NFT transfers).
 
 **Known marketplace contract addresses (for buyer wallet identification):**
 - Foundation v1 proxy: 0xcda72070E455bb31C7690a170224cE43623D0B6f (AdminUpgradeabilityProxy, created Jan 2021) — escrows NFTs for listing, pays sellers via internal txs
