@@ -85,13 +85,20 @@
 **Part A — Still holding the bag:**
 - 269 of 280 collections held are dead (96% — no transfer activity in 90+ days)
 - 1,291 NFTs in dead collections
-- 78 collections they PAID to mint, still holding, dead 180+ days — **28.94 ETH spent**, current value ~0 ETH
-- Worst: Art Blocks (19 held, paid 4.72 ETH, dead 1,147 days / ~3 years)
-- TinyBoxes (18 held, paid 1.60 ETH, dead 1,518 days / ~4 years)
-- Savage Droids (16 held, paid 1.58 ETH, dead 1,660 days / ~4.5 years)
-- LordsOfLightPacks (27 held, paid 1.15 ETH, dead 1,722 days / ~4.7 years)
-- VeeFriends (2 held, paid 1.00 ETH, dead 1,859 days / ~5 years)
-- Goofy Oversized Optics People (30 held, paid 0.92 ETH, dead 1,521 days)
+- 78 collections they PAID to mint, still holding, dead 180+ days — **28.94 ETH spent**
+- Worst: Art Blocks (19 held across 14 projects, paid 4.72 ETH — contract alive but tokens unmoved 1100+ days)
+  - Fidenza by Tyler Hobbs (2 held, unmoved 1147 days)
+  - Physical Painting by Dmitri Cherniak (1 held, unmoved 1844 days)
+  - Cold Construction by Tyler Hobbs (2 held, unmoved 1577 days)
+  - Genesis by Dmitri Cherniak (1 held, unmoved 1821 days)
+  - Fragments by aaronpenne (1 held, unmoved 1590 days)
+  - Synapses by Yazid (2 held, unmoved 1821 days)
+  - Plus 8 more projects
+- TinyBoxes (18 held, paid 1.60 ETH, dead 1518 days)
+- Savage Droids (16 held, paid 1.58 ETH, dead 1660 days)
+- LordsOfLightPacks (27 held, paid 1.15 ETH, dead 1722 days)
+- VeeFriends (2 held, paid 1.00 ETH, dead 1859 days)
+- Goofy Oversized Optics People (30 held, paid 0.92 ETH, dead 1521 days)
 
 **Part B — Already dumped for dust:**
 - 5 paid-mint NFTs sold for ~0 ETH — 0.08 ETH spent, 0 ETH received
