@@ -644,6 +644,7 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 - Separate artist sales from collector resales on Foundation
 - Find unconsolidated wallets via ENS subgraph (6529 caps at 3 wallets per profile)
 - Never report gross marketplace payout as artist revenue — check if wallet MINTED any NFTs from 0x0 first
+- Marketplace flow is bidirectional — always report NET (payouts received minus ETH sent to marketplace). Gross payout alone is misleading. blocknoob example: 191K ETH received from Foundation but 270K ETH sent TO Foundation — net -79K ETH (net buyer, not net seller)
 - Collector collection selection: be comprehensive — total counts, notable by volume OR significance, 6529 ecosystem separately, established art platforms, any collection with >10 transfers
 - SuperRarer (Chonkly) ≠ SuperRare — always verify contract addresses
 - Social links = neutral data, no judgmental language about rep
