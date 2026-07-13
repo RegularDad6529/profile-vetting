@@ -65,7 +65,7 @@ Small activity on a few other micro-collections: LOST (4 minted), State of Mind 
 1. Wallet active for 3+ years with genuine on-chain history
 2. Self-deployed ERC-721 contract (TTA) via manifold.xyz with a real third-party sale on Foundation to an independent collector
 3. Manifold edition drops with 25+ small sales to various buyers in 2023
-4. Social links present matching the artist persona
+4. Social links present (X, Instagram, email)
 5. Active and human community participation on 6529
 
 ## Things to Consider

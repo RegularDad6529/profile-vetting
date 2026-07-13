@@ -98,7 +98,7 @@ Profiles joined over 14+ months (NOT batch-created):
 ## Rep
 - Meme Nominee: 1,400 (Sherie_Margaret L51: 1,200 = 86%, Ebrahim_Elmi L26: 100, resetnft L23: 100)
 - MemesNominee: 500 (desolalasisi L32)
-- 86% from Sherie_Margaret — narrow, likely community members being nice without researching profile
+- 86% from Sherie_Margaret — narrow support base
 
 ## Community Engagement
 - 18 dive bar posts on first day — conversational, personal
@@ -120,9 +120,9 @@ Profiles joined over 14+ months (NOT batch-created):
 - **Zero presence on real art platforms** beyond 1 Foundation sale + Manifold editions (all from 2023)
 - Main 2026 "portfolio" is on a SuperRare knockoff contract ("SuperRarer") with micro-priced sales to the platform operator
 - The SuperRarer name is deliberate brand mimicry — and the contract is NOT indexed on OpenSea, making the tokens invisible to the standard NFT ecosystem
-- 6529 profile is 3 days old with 1,950 rep — rep from community being nice, not from research
+- 6529 profile is 3 days old with 1,950 rep
 - 86% of rep from one supporter
-- Social links may be fake — RD caution: don't treat mere existence as verification
+- Social links present (X, Instagram, email) — noted but not assessed for authenticity
 - All Chonkly sales go to one wallet (chonkly.eth) — single-buyer concentration
 - The entire Chonkly platform operates outside OpenSea — 2,200+ tokens invisible on the primary NFT marketplace. Artists claiming "sales" on SuperRarer have no verifiable market presence on the standard infrastructure.
 
