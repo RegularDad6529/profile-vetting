@@ -60,10 +60,11 @@
 ### Foundation
 - Zero activity
 
-## 6529 Ecosystem
-- 6529er Collection (2 held), Karen Army (1 held)
+### 6529 Ecosystem
+- 6529er Collection (2 held), Karen Army (1 held), 6529Complaints (1 held)
 - Sold 1 NextGen 6529 for 4.36 ETH (Feb 2024)
 - Zero 6529 Gradient currently held
+- TDH 1,840,666 — significant 6529 network presence
 
 ## On-Chain Notes
 - Fidenza flip: bought 34.98 ETH → sold 37.00 ETH = +2.02 ETH profit in 2 months
@@ -72,4 +73,3 @@
 - Heavy flipper on CryptoFish, DeadFellaz, On-Chain All-Stars
 - Significant TDH from 0xff4f0dbc wallet (1,666,051 TDH) — major NFT holder
 - No wash trading, zero knockoff platform exposure
-- Minimal 6529 ecosystem engagement (3 items held)
