@@ -17,8 +17,8 @@ Artists may deploy work from collaborative wallets (e.g., @zeeblocks uses ze-blo
 ### 3. Exclude self-transfers from ETH revenue (2026-07-13)
 Before counting "incoming ETH", check whether the sender wallet is one of the artist's own consolidated wallets (same ENS root, same 6529 identity, or known self-wallets). Self-transfers between own wallets inflate gross ETH flows dramatically. Always calculate NET art revenue = (incoming from marketplaces + incoming from independent buyers) - (self-transfers + exchange withdrawals).
 
-### 4. Fetch ALL transaction pages (2026-07-13)
-Blockscout API paginates at 100 txs/page. Wallets with high activity can have 1,000+ txs (RD example: 1,808 txs across 18 pages). Only fetching page 1 massively undercounts ETH flows. ALWAYS loop through all pages until a page returns < 100 results. This applies to both `txlist` (ETH transfers), `txlistinternal` (internal txs), and `tokennfttx` (NFT transfers).
+### 4. Fetch ALL transaction pages (2026-07-13, UPDATED)
+Blockscout API paginates at 100 txs/page. Wallets with high activity can have 1,000+ txs (RD example: 1,808 txs across 18 pages). Only fetching page 1 massively undercounts ETH flows. ALWAYS loop through all pages until a page returns < 100 results. This applies to `txlist` (ETH transfers), `txlistinternal` (internal txs), `tokennfttx` (NFT transfers), AND `tokentx` with `contractaddress=0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2` (WETH token transfers — see pitfall #52). WETH transfers are required because Seaport can pay sellers in WETH instead of raw ETH.
 
 ### 5. Never report gross incoming ETH as headline (2026-07-13)
 Gross incoming ETH includes exchange withdrawals, self-transfers, and personal funds — all meaningless for artist assessment. ONLY report ETH from marketplace contracts (OpenSea/Seaport, Foundation, Manifold, SuperRare) and verified direct art sales. Categorize every incoming tx by source before reporting anything. Example: RD's gross incoming was 128K ETH but art marketplace revenue was 0 ETH — the 128K was just years of exchange withdrawals.
@@ -111,8 +111,10 @@ Profile wave drops can be fetched via `GET /waves/{profile_wave_id}/drops` to se
 - Manifold ERC721: 0x7581871e1c11f85ec7f02382632b8574fad11b22
 - SuperRare v1: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d
 - SuperRare v2: 0xB932a70A57673d89f4acffBE830e8ed7f75fb9e0
-- Seaport 1.6: 0x00000000000001adF28D0aCDeB0B5b31601b3b0d
+- Seaport 1.6: 0x00000000000000ADc04C56Bf30aC9D3c0aAF14dC
 - Seaport 1.5: 0x0000000000000068F116a894984e2DB1123eB395
+- Seaport 1.4: 0x00000000000001adF28D0aCDeB0B5b31601b3b0d
+- WETH (Wrapped Ether): 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 - OpenSea Wyvern: 0x7be8076f4ea4b96b62c43e4a9c3a3b87e2f7c1f2
 - Chonkly SuperRarer (NOT SuperRare): 0xc360ceca69988e39be18ddb89e69afcc33a3833a
 - Chonkly: 0x235f18021160bcd312c65496df1caf2b9ce5904d
@@ -269,6 +271,8 @@ When matching sale prices (ETH incoming for NFT outgoing), Seaport marketplace s
 
 Example: RegularDad's BUILDINGS // NYC #785 sale — the 0.0129 ETH payment came as an internal tx from 0x0000000000000068f116a894984e2db1123eb395 (Seaport 1.5). The regular `txlist` showed zero ETH incoming in that block. Without checking internal txs, the sale was missed entirely and the P&L was wrong.
 
+**See also pitfall #52**: Seaport may also pay in WETH (ERC-20), not just ETH internal txs. Check WETH token transfers when no ETH internal tx is found.
+
 ### 48. Etherscan v1 API is deprecated — use v2 (2026-07-13)
 Etherscan v1 endpoints (`api.etherscan.io/api?module=...`) return "You are using a deprecated V1 endpoint". Use v2: `api.etherscan.io/v2/api?chainid=1&module=...`. The v2 API requires `chainid=1` for Ethereum mainnet. All other params are the same as v1. An API key is still required for reliable access — set via ETHERSCAN_API_KEY env var.
 
@@ -282,4 +286,4 @@ Report the numbers only for Biggest L and Biggest Wins. Do not add editorializin
 A mint that cost 0.007 ETH is a PAID mint, not a free mint. Free mint = 0 ETH cost. Any non-zero ETH paid to mint is a paid mint, regardless of how small the amount. Do not label purchases as "free mint flips" when ETH was paid.
 
 ### 52. Seaport can pay in WETH, not just ETH — check WETH token transfers (2026-07-13)
-Seaport 1.6 (0x00000000000000ADc04C56Bf30aC9D3c0aAF14dC) and Seaport 1.5 (0x00000000000001adF28D0aCDeB0B5b31601b3b0d) can pay sellers in WETH (ERC-20 token) instead of raw ETH. WETH payments show up as ERC-20 token transfers, NOT as ETH internal transactions. If a sale goes through Seaport but no ETH internal tx is found, check for WETH (contract 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2) token transfers to the seller's wallet in the same block. The seller may also unwrap WETH to ETH via the WETH contract (0xc02aaa39...) in a subsequent tx — look for internal txs FROM the WETH contract. Without checking WETH, sale proceeds are understated and Biggest L is overstated.
+Seaport 1.6 (0x00000000000000ADc04C56Bf30aC9D3c0aAF14dC) and Seaport 1.5 (0x0000000000000068F116a894984e2DB1123eB395) can pay sellers in WETH (ERC-20 token) instead of raw ETH. WETH payments show up as ERC-20 token transfers, NOT as ETH internal transactions. If a sale goes through Seaport but no ETH internal tx is found, check for WETH (contract 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2) token transfers to the seller's wallet in the same block. The seller may also unwrap WETH to ETH via the WETH contract (0xc02aaa39...) in a subsequent tx — look for internal txs FROM the WETH contract. Without checking WETH, sale proceeds are understated and Biggest L is overstated.

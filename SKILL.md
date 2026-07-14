@@ -16,6 +16,8 @@ Run: `python3 scripts/run_assessment.py <HANDLE>`
 
 ## Assessment Sections (in order)
 
+**Output template**: `templates/assessment-template.md` — copy and fill in. Includes all required sub-sections.
+
 ### 1. 6529 Profile
 - Fetch from `GET /identities/{handle}` (NOT `/profiles/{handle}` — that returns nested objects)
 - Extract: handle, primary_wallet, wallets array, rep, level, tdh, xtdh, cic, profile_wave_id
@@ -35,9 +37,16 @@ Run: `python3 scripts/run_assessment.py <HANDLE>`
 - SN_WAVE ID: `0ecb95d0-d8f2-48e8-8137-bfa71ee8593c`
 
 ### 2b. Community Wave Engagement (MANDATORY — DO NOT SKIP)
-**PITFALL (2026-07-13)**: In the @kiramoto assessment, I reported "zero 6529 engagement" based on 0 SN posts and no profile wave. This was WRONG — kiramoto was actively posting in maybe's dive bar (~20 messages on his first day, recognized by existing collectors). Reporting "zero engagement" when the artist is actively participating in a community wave is a significant false negative.
+**Fetch via**: `GET /identities/{handle}/activity` — returns `{last_date, date_samples}` with a 365-element array of daily drop counts. Non-zero entries = active days. This is the CORRECT method (pitfall #31 — `author_handle` param on `/drops` is BROKEN and returns global drops, not filtered).
+**PITFALL (2026-07-13)**: In the @kiramoto assessment, I reported "zero 6529 engagement" based on 0 SN posts. This was WRONG — the artist was actively posting in community waves. Use the activity API, not SN posts alone.
 
 **Always check these community waves for the artist's activity:**
+- maybe's dive bar (373K+ drops, pagination limited)
+- Meme Club
+- Seeking Nomination
+- Any profile wave
+
+Use the activity API first. For specific wave post counts, scan wave drops locally.
 - **Maybe's dive bar** (`b38288e6-ca9d-45ce-8323-3dc5e094f04e`): `GET /waves/{wave_id}/drops?limit=200` — filter by author handle. This is where new and returning members introduce themselves and build community. Many newcomers post here before submitting to SN.
 - **Meme Club** (`d23af421-203d-4e37-abc1-4d9df840026c`): Check for participation, voting, submissions.
 - **Karen Army**: Check if the artist is a wave subscriber (indicates community commitment).
@@ -84,6 +93,11 @@ Run: `python3 scripts/run_assessment.py <HANDLE>`
 - Artist activities (deployed_contract, sold_on_marketplace, listed_on_marketplace, minted_on_platform, configured_drop)
 - Sale sources with date, ETH amount, marketplace name, sender address
 - Non-sale ETH transfers (correctly excluded)
+- **Top 3 purchases/sales** (match ETH↔NFT by block, see pitfall #29/#32)
+- **Wave activity** (`GET /identities/{handle}/activity`, see pitfall #31)
+- **Top 3 most expensive purchases** (NFT name, token ID, ETH price, date) — match ETH outgoing to NFT incoming by block number
+- **Top 3 most expensive sales** (NFT name, token ID, ETH price, date) — match ETH incoming (regular + internal txs) to NFT outgoing by block number
+- **Wave activity** — use `GET /identities/{handle}/activity` (365-day array, pitfall #31 — `author_handle` on `/drops` is BROKEN). Report active days out of 365 and recent activity.
 
 ### 6. Artwork Analysis
 - `get_artwork_from_minted_collections()` fetches on-chain artwork from artist's own collections
@@ -635,7 +649,7 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 3. Check NFT flow: are NFTs going IN then OUT to many buyers? (marketplace escrow) Or accumulating? (collector)
 ## Pitfalls & Lessons Learned
 
-**See `references/pitfalls.md` for the full list** — 14 documented pitfalls including:
+**See `references/pitfalls.md` for the full list** — 52 documented pitfalls. See also `references/sale-price-matching.md` for WETH/multi-mint sale matching methodology.
 - Check 6529 API artist fields FIRST (artist_of_prevote_cards, winner_main_stage_drop_ids)
 - Check collaborative wallets (zeeblocks pattern)
 - Exclude self-transfers and exchange withdrawals from ETH revenue
@@ -647,31 +661,21 @@ When tracing ETH payments to artists, identify the sender contract to determine 
 - Marketplace flow is bidirectional — always report NET (payouts received minus ETH sent to marketplace). Gross payout alone is misleading. blocknoob example: 191K ETH received from Foundation but 270K ETH sent TO Foundation — net -79K ETH (net buyer, not net seller)
 - Foundation bid escrow inflates gross flows — ETH is locked when bidding and returned if outbid. Never show gross ETH figures for Foundation. Only show NFT counts (bought/sold/held) and net position
 - Minting from a contract ≠ creating the contract. Check who DEPLOYED the contract, not just who minted from 0x0. david example: minted 172 "death and taxes" NFTs from 0x0 but the contract was created by a separate factory (0x3b3B425b...) — he's a collector, not the artist. Always verify contract creator address via Blockscout v2 addresses API (creator_address_hash field).
-- Collector collection selection: be comprehensive — total counts, notable by volume OR significance, 6529 ecosystem separately, established art platforms, any collection with >10 transfers
-- Self-transfers inflate NFT transfer counts — when reporting "held" or "sold", exclude transfers between the subject's own wallets. blocknoob example: 84 Foundation NFTs "sent out" but 66 were to his own wallets — only 18 actually sold. Report net held after excluding self-transfers.
+- **On-chain pitfalls consolidated**: see `references/onchain-pitfalls.md` for the full reference (ETH flow, NFT collection analysis, contract verification, wallet discovery, marketplace addresses)
+- **Profile reference files**: `references/blocknoob.md`, `references/david.md`, `references/hugofaz.md`, `references/arsonic-gpebbles-crossref.md` — session-specific assessment examples
+- **ENS subgraph wallet discovery**: see `references/ens-subgraph-wallet-discovery.md` for finding unconsolidated wallets beyond 6529's 3-wallet cap
 - SuperRarer (Chonkly) ≠ SuperRare — always verify contract addresses
 - Social links = neutral data, no judgmental language about rep
 - Feedback docs: no raw contract addresses
 - Blockscout doesn't index proxy contract NFT transfers
 - eth_call patterns for NextGen 6529 contract metadata
+- **Top 3 purchases/sales + wave activity + linked 6529 profiles + game mechanics + free mint farming** — see pitfalls #28-33
 
-Key marketplace contract addresses and 6529 API endpoints also in `references/pitfalls.md`.
-**Known marketplace contract addresses (for buyer wallet identification):**
-- Foundation v1 proxy: 0xcda72070E455bb31C7690a170224cE43623D0B6f (AdminUpgradeabilityProxy, created Jan 2021) — escrows NFTs for listing, pays sellers via internal txs
-- Foundation v2: 0x3B3ee1931Dc30F20FFA2Df07F88f93C1B0b94fC0
-- Manifold ERC1155LazyPayableClaim: 0x44e94034afce2dd3cd5eb62528f239686fc8f162 — pays artists for edition drops
-- Manifold ERC721LazyPayableClaim: 0x7581871e1c11f85ec7f02382632b8574fad11b22 — pays artists for ERC721 drops
-- SuperRare v1: 0x41A322b28D0fF354040e2CbC676f0320d8c8850d (name: "SupeRare", symbol: SUPR) — the REAL SuperRare, NOT to be confused with Chonkly's "SuperRarer"
-- SuperRare v2: 0xB932a70A57673d89f4acFFBE830e8ED7f75fb9e0 (name: "SuperRareV2") — also real SuperRare
-- Seaport (OpenSea): 0x00000000000001adF28eF1c7D0186488931B0b94fC0
+Key marketplace contract addresses and 6529 API endpoints: see `references/pitfalls.md` (sections "Known Marketplace Contract Addresses" and "Key 6529 API Endpoints").
 
 ### Collector Resale vs Artist Sale (2026-07-13, REINFORCED)
 
-**PITFALL**: Marketplace payouts (Foundation, OpenSea, SuperRare) are not always artist revenue. A collector who buys an NFT and later resells it receives a marketplace payout — but that's a **collector flip**, not an **artist sale**. The ETH amount can be large (arsonic: 2,209 ETH from Foundation for reselling Inevitable Rise #6; hugofaz: 25,759 ETH from Foundation including ~21K ETH from reselling Sebastiao Salgado "Amazonia" and Bruce Gilden photography). Blocknoob: 191K ETH from Foundation, ALL collector resales (234 bought, 84 resold, 0 minted).
-
-**Rule**: Before counting a marketplace payout as artist revenue, verify the NFT being sold was created by the artist being assessed:
-1. Check which NFT was sent to the marketplace contract around the payout date
-2. Check if the NFT's contract was deployed by the artist (own contract = artist sale)
+**See pitfalls.md #6, #9-#10, #28.** Verify via `creator_address_hash` that the NFT contract was deployed by the artist before counting payouts as revenue. Foundation payouts include collector resales. Never show gross ETH for Foundation — only NFT counts and net position. Free mint farming (minting from 537 public contracts) ≠ artist output.
 3. Check if the NFT was minted by the artist (mint tx from artist = artist sale)
 4. If the NFT was received FROM another wallet or marketplace (purchased/collected), the subsequent sale is a **collector resale**, not artist revenue
 5. For high-volume Foundation collectors, the majority of Foundation payouts may be collector resales — check ALL NFTs sent to Foundation and track which returned (unsold) vs stayed (sold)

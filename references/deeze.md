@@ -8,8 +8,8 @@
 
 ## Wallets
 - **headie.eth** (0xf5d4a3b9...) — primary, only wallet in 6529 profile
-- **ranagade.eth** (0xab3262ea...) — no NFT activity
-- **lilblnde.eth** (0x74cfb7f3...) — no NFT activity
+- **ranagade.eth** (0xab3262ea...) — no NFT activity, has 6529 profile (L0, no handle)
+- **lilblnde.eth** (0x74cfb7f3...) — no NFT activity, has 6529 profile (L0, no handle)
 - comfygang.eth, highdea.eth — resolve to headie.eth (same wallet)
 
 ## Artist Work
@@ -47,8 +47,7 @@
 - Rug Radio Faces (19), Mindblowon Universe (16), Louis Vuitton Ape (16)
 - Burnt Boy by Deeze x Goonz (9)
 - Art Blocks (9 held, 77 bought, 68 sold — heavy flipping)
-- Art Blocks Explorations (7)
-- BrainDrops (3)
+- Art Blocks Explorations (7), BrainDrops (3)
 
 ### Foundation
 - 9 bought, 8 sold, 1 held — active flipper
@@ -56,16 +55,9 @@
 ### Most flipped
 - CryptoTitVags (86 sold), Checks (74 sold), Art Blocks (68 sold)
 - Elemental (49 sold), Rektguy (36 sold), Nakamigos (33 sold)
-- Milad Maker (26 sold), ALIENFRENS (23 sold), BrainDrops (22 sold)
 
 ### 6529 ecosystem
 - Zero 6529 ecosystem holdings (no Gradient, NextGen, Karen Army, dwellers, or Memes)
-
-### Art / established
-- Art Blocks (9), Art Blocks Explorations (7), BrainDrops (3)
-- Foundation (1)
-- Zero SuperRare
-- Zero SuperRarer/Chonkly exposure
 
 ## On-Chain Notes
 - 0 deployed contracts — not a contract creator

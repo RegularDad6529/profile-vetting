@@ -224,6 +224,51 @@ Real timeline from CIC statement dates:
 - The Next.js JS bundles may contain function names but they're minified
 - In practice, the on-chain metadata is more reliable than trying to reverse-engineer the Convex API
 
+## OpenSea Invisibility (2026-07-13)
+
+**Finding**: chonkly.eth holds ~2,200+ NFTs on-chain (1,804 SuperRarer + 409 Chonkly + 4 real SuperRare + misc) but shows only 9 tokens on OpenSea.
+
+**Cause**: Both SuperRarer (0xc360ceca) and Chonkly (0x235f1802) contracts return **404 on OpenSea's API** — they are not indexed as collections. OpenSea does not recognize them at all.
+
+**Verification method**:
+- `GET https://api.opensea.io/api/v2/collections/chain/ethereum/{contract}/stats` → 404 for both contracts
+- OpenSea v1 API is permanently removed (returns 410)
+- On-chain `balanceOf` via RPC confirms thousands held, but OS profile shows single digits
+
+**Impact for vetting**:
+1. An artist whose entire portfolio is on unverified/unindexed contracts will show near-zero NFTs on OpenSea — this is a red flag when their on-chain transfer count is high
+2. When a wallet shows very few NFTs on OS but has thousands of transfers on Blockscout, check whether the contracts are indexed on OS
+3. Contracts not indexed on OpenSea are invisible to the broader NFT ecosystem — they exist only on their native platform and block explorers
+4. This compounds the SuperRarer/SuperRare brand mimicry: not only is the name similar, the tokens are invisible on the major marketplace
+
+**Note**: Some SuperRarer tokens have been distributed to real EOAs (ooakosimo.eth with 202 tokens, ernestoasch.eth, etc.) — these holders also can't see their tokens on OpenSea.
+
+## SuperRarer ≠ SuperRare — Verified Across All 13 Profiles (2026-07-13)
+
+**RD asked**: "Is SuperRarer a different contract than SuperRare?" — Yes, completely different.
+
+**Systematic verification**: Checked all 13 Chonkly-connected 6529 profiles for real SuperRare (0x41A322b28D0fF354040e2CbC676f0320d8c8850d) vs SuperRarer (0xc360ceca69988e39be18ddb89e69afcc33a3833a) token transfers:
+
+| Handle | Real SuperRare | SuperRarer (Chonkly) |
+|---|---|---|
+| @Rueby | 0 | 80 |
+| @XON | 0 | 65 |
+| @StarWalkar | 0 | 224 |
+| @9GreenRats | 0 | 41 |
+| @Niniola4u | 0 | 168 |
+| @Bahar_psh | 0 | 20 |
+| @Bubblezzz | 0 | 300 |
+| @Ordinaryartist | 0 | 145 |
+| @Temi | 0 | 107 |
+| @CnNymphs | 0 | 384 |
+| @Tejiri | 0 | 24 |
+| @Curtisforfun | 0 | 0 |
+| @Beam | 0 | 75 |
+
+**Result: ZERO real SuperRare transfers across all 13 profiles.** 12 of 13 have SuperRarer tokens only. Curtisforfun has neither (Chonkly collection only).
+
+Any previous assessment that attributed "SuperRare mints" to any of these profiles was wrong — same misattribution as Beam. They're all on the Chonkly knockoff contract that's not indexed on OpenSea.
+
 ## Key Takeaway
 
 When a shared NFT contract appears across multiple 6529 profiles:

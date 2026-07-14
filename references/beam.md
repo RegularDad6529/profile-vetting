@@ -137,7 +137,6 @@ Profiles joined over 14+ months (NOT batch-created):
 - No sustained career on any real platform
 - Pivoted to Chonkly's SuperRarer knockoff in 2026 — a contract invisible on OpenSea
 - Single-buyer concentration on Chonkly
-- Social links unverified for content/followers
 - The Chonkly platform's contracts being unindexed on OpenSea further diminishes the value of "sales" on that platform — there is no external market visibility or liquidity for these tokens
 
 ## Revision History
@@ -154,7 +153,7 @@ Profiles joined over 14+ months (NOT batch-created):
 1. **SuperRarer ≠ SuperRare** — verify contract addresses, not names
 2. **`created_at` unreliable for batch creation** — cross-check CIC dates
 3. **Investigate the buyer wallet** — 0xcda72070 looked like "a contract with 31 ETH" but is Foundation v1 marketplace proxy. 7 of 9 TTA tokens came back to Beam (unsold listings). Only 1 real sale.
-4. **Social links can be fake** — don't treat existence as verification. Check for actual content/followers.
+4. **Social links are neutral data** — note their presence, do not score as positive or negative. We cannot verify authenticity from the server.
 5. **Single-buyer concentration is always concerning** — even if buyer is platform operator, it means zero independent market demand.
 6. **Manifold LazyPayableClaim contracts** — 0x44e94034 (ERC1155) and 0x7581871e (ERC721) are legitimate Manifold payout contracts. ETH from these = real edition sales.
 7. **Check OpenSea indexing status** — contracts not indexed on OpenSea (404 on v2 API) are invisible to the standard NFT ecosystem. "Sales" on unindexed contracts have no external market visibility. A wallet holding thousands of NFTs that show as 9 on OpenSea is a red flag for the platform's legitimacy.
