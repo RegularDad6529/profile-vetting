@@ -55,25 +55,42 @@
 | Live modeling sessions | NUALM | ERC-721 | 5 | 5 | 1 |
 | Memberships, Participation, Certificates | GMNUA | ERC-1155 | 4 | 0 | 35 |
 
+### Art Sales Revenue
+
+**Total verified art revenue: ~43.7 ETH**
+
+**Formosa 6529 — 38 ETH from 30 sales (Seaport, verified):**
+- 3 sales at 3 ETH each (#5, #7, #19 — Nov 2025)
+- 2 sales at 2 ETH each (#3, #30 — Nov 2025)
+- 25 sales at 1 ETH each (#1-4, #6, #8-18, #20-29 — Nov 2025 to Mar 2026)
+
+**Other art sales (WETH/direct, verified):**
+- SOMBRA or World Today sale: 2.96 WETH from pateideias.eth (Dec 2022)
+- The Expanded Body #2: 0.515 ETH via Seaport (Apr 2023)
+- hugofaz.eth WETH from external buyers: 0.37 ETH total (0.2352, 0.0704, 0.025, 0.0202, 0.0147, 0.005)
+- casanua.eth WETH from Foundation auction payouts: 1.84 WETH total on Mar 31, 2023 (9 payments from different buyers — Live modeling sessions auction)
+
+**Top individual art sales:**
+1. Formosa 6529 #5 — 3 ETH (Nov 2025)
+2. Formosa 6529 #7 — 3 ETH (Nov 2025)
+3. Formosa 6529 #19 — 3 ETH (Nov 2025)
+4. Formosa 6529 #3 — 2 ETH (Nov 2025)
+5. Formosa 6529 #30 — 2 ETH (Nov 2025)
+6. SOMBRA/World Today — 2.96 WETH (Dec 2022, to pateideias.eth/Patê)
+7. The Expanded Body #2 — 0.515 ETH (Apr 2023)
+8. casanua Live modeling sessions — 1.84 WETH total (Mar 2023, 9 auction payouts)
+
 ### Foundation Marketplace Activity
 
 **Sold (56 total):**
-- Own art: 39 sales
-  - The World Today x10 (Aug 2022–Mar 2023)
-  - SOMBRA x7 (Jan–Apr 2023)
-  - 100 Nude Shoots of Hugo x6
-  - Live modeling sessions x5
-  - Portraits x4
-  - By Accident — The Negatives x3
-  - The Expanded Body x2
-  - 100 NUDE Shoots (of Hugo) x1
-  - 1of1 one-offs x1
-- Collector flips: 17 sales
-  - Foundation x8, Bruce Gilden x1, SOULTREES by Louis Iruela x1, ABLUTION x1, Closer Together x1, Dance Mementos x1, Fleas x1, Krampus x1, B Editions x1, "the only gm you'll ever need" x1
+- Own art: 39 sales (The World Today x10, SOMBRA x7, 100 Nude Shoots x6, Live modeling sessions x5, Portraits x4, By Accident x3, The Expanded Body x2, 100 NUDE Shoots x1, 1of1 one-offs x1)
+- Collector flips: 17 sales (Foundation x8, Bruce Gilden x1, SOULTREES x1, ABLUTION x1, Closer Together x1, Dance Mementos x1, Fleas x1, Krampus x1, B Editions x1, "the only gm" x1)
 
 **Bought (35 total):**
 - Own art buybacks: 13 (SOMBRA x5, Portraits x3, The Expanded Body x2, 100 Nude Shoots x2, 100 NUDE Shoots x1)
 - Other artists collected: 22 (Foundation x4, plus 18 unique photography/digital art collections including Eerie Polaroids, [reverie in bloom], Content of My Heart, Digital Fantasies, Wonderland, ICE SHACK, Projected Dreams, Fantasy Creeps, Les Enfants de la Balle, and more)
+
+**Note:** Foundation sales use a proxy escrow — NFT transfer txs show 0 ETH. Sale revenue verified via Seaport tx values (Formosa) and incoming WETH transfers from buyers/marketplace contracts. Some WETH may include collector flip proceeds mixed with own-art sales.
 
 ### Photography Practice
 Hugofaz is a photography-focused artist working in series:
