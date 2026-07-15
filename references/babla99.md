@@ -11,7 +11,7 @@
 
 ## On-Chain Summary
 
-- **14 total transactions** — first tx July 31, 2025 (~2 weeks ago)
+- **14 total transactions** — first tx July 31, 2025 (~1 year ago)
 - **2 NFT transfers, 1 mint, 0 currently held**
 - **0 collections, 0 purchases, 1 outgoing transfer**
 - **0 ETH volume** — all transactions are 0 ETH (free mint + gas only)
@@ -76,15 +76,15 @@ None. TDH 0, CIC 0, no meme cards, no wave activity, no 6529 NFTs held.
 
 **SUSPICIOUS**
 
-This is a brand-new wallet (2 weeks old) with almost no on-chain history:
-- 14 total transactions, all micro gas amounts
+This is a minimal wallet with almost no on-chain history:
+- 14 total transactions over 1 year, all micro gas amounts
 - 1 deployed contract (Pepe Samurai) with 1 token minted today
 - 0 NFT purchases, 0 collections, 0 held
 - TDH 0, CIC 0 — zero 6529 ecosystem engagement
 - No social links, no ENS, no delegations
 - No Main Stage wins, no meme cards, not a wave creator
 - Received an OpenLedger airdrop — only non-NFT token activity
-- All meaningful activity happened today (contract deploy + mint + list in 14 minutes)
+- Wallet dormant for 10 months (Sep 2025 to Jul 2026), then deployed and listed a single NFT today
 
 The profile has 20K rep (enough for Level 13) but no visible rep sources. The wallet was likely funded specifically to create and list this single NFT. No evidence of prior art practice, collecting history, or community engagement.
 
@@ -93,6 +93,6 @@ The profile has 20K rep (enough for Level 13) but no visible rep sources. The wa
 
 ## Notes
 - Wallet funded July 31, 2025 with micro amounts — possible faucet/test funding
-- 10-month gap between Sep 2025 and July 2026 activity
+- 10-month dormancy gap (Sep 2025 to Jul 2026)
 - Single NFT (Pepe Samurai) created and listed today — no artistic track record
 - TLAuctionHouse listing suggests intent to sell, but no sales volume
