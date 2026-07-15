@@ -3,64 +3,96 @@
 ## 6529 Community
 
 ### hugofaz
-- Level 86 | Rep 4,339,517 | CIC 490,383 | TDH 7,164,304
+- Level 86 | Rep 4,339,517 | CIC 490,383 | TDH 7,176,239
 - GOVERNMENT_NAME (real name) | Wave Creator
-- Wallet active since November 2022 (vault.hugofaz.eth first tx)
-- 3 wallets: vault.hugofaz.eth (TDH 6,719,235), social.hugofaz.eth (TDH 207,333), hugofaz.eth (TDH 44,118)
+- 3 wallets: vault.hugofaz.eth (TDH 6,730,251), social.hugofaz.eth (TDH 207,700), hugofaz.eth (TDH 44,272)
+- hugofaz.eth is the art deployment wallet — all Foundation sales and contract deployments come from here
 
 ### casanua (owned by hugofaz)
-- Level 66 | Rep 1,059,604 | CIC 135,704 | TDH 1,751,649
+- Level 66 | Rep 1,059,604 | CIC 135,704 | TDH 1,754,169
 - ORGANIZATION | Wave Creator
 - Wallet active since April 5, 2021 (~5.3 years)
-- 3 wallets: casanua.eth (TDH 1,667,800), vault.casanua.eth (TDH 42,873), social.casanua.eth (TDH 6,647)
+- 3 wallets: casanua.eth (TDH 1,669,944), vault.casanua.eth (TDH 43,134), social.casanua.eth (TDH 6,710)
 - ETH transfers between hugofaz and casanua confirm linked ownership
 
 ## Artist Work
 
-### hugofaz — 6529 Main Stage: 2x Winner
-1. **Crypto Atlas** — Main Stage winner, minted on The Memes
-2. **Flipped** — Main Stage winner, minted on The Memes
+### 6529 Main Stage: 5 Combined Wins (2 hugofaz + 3 casanua)
 
-### casanua — 6529 Main Stage: 3x Winner
-1. **Formosa 6529** — minted on The Memes
-2. **6529 Memes at the Boys' Club** — minted on The Memes
-3. **PEBBLES at Domínio PúbliCC0** — minted on The Memes
+**hugofaz wins:**
+1. **Crypto Atlas** — Main Stage winner, 67 raters, 41.2M rating. Description: "Where the Farnese Titan once knelt beneath constellations carved by forgotten mathematicians, a new Atlas is unveiled for the XXI Century! Not bound by divine punishment, but a vessel for a collective awakening, shouldering an aggregate of open-source dreams. Stone becomes scripture..."
+2. **Flipped** — Main Stage winner, 97 raters, 46.4M rating. Description: "Up Only or (upside)Down Bad, Forever On Chain."
 
-### hugofaz — 6529 Meme Card #30 — Credited artist
+**casanua wins:**
+1. **Formosa 6529** — Main Stage winner, 65 raters, 67.4M rating. Description: "There are moments in history when a word stops being a name and becomes a frequency. A bridge, between land and cloud. It rises not from stone or code, but from the ancient intuition that beauty, when held in common, becomes a shelter for the human future."
+2. **6529 Memes at the Boys' Club** — Main Stage winner, 70 raters, 64.4M rating. Description: "In the long lost year of 2024, punk6529 asked Meme Artists to create a special piece for Stream, a new 6529 contract for 1-of-1s that would serve as a timeline record of the most important digital objects! Hugo Faz and Patê got together at Casa NUA and made this video in homage..."
+3. **PEBBLES at Domínio PúbliCC0** — Main Stage winner, 74 raters, 112.8M rating (highest-rated of all 5 wins). Description: "SEIXOS (PEBBLES) is the third curation of Dominio PubliCC0, the 6529 gallery operated by Casa NUA in São Paulo, Brazil, and the first to present an entire CC0 generative art collection to audiences IRL: the 1,000 Pebbles, created by the artist duo ZeBlocks (Arsonic and Cheaterflum..." — is_additional_action_promised: True
 
-### Original Art Collections (hugofaz)
-- **The World Today** — 14+15 mints across two contracts, photography series, 10 sold on Foundation
-- **100 Nude Shoots of Hugo** — 7+6 mints across two contracts, self-portrait photography, 6 sold on Foundation
-- **100 NUDE Shoots - Editions** — 4 mints (vault wallet), 1 sold on Foundation
-- **SOMBRA** — 6 mints, 7 sold on Foundation (some bought back then resold)
-- **Portraits** — 7 mints, 4 sold on Foundation
-- **Portraits by Hugo Faz - Editions** — 3 mints (vault + hugofaz wallets)
-- **The Expanded Body** — 4 mints, 2 sold on Foundation
-- **The Expanded Body - Editions** — 2 mints
-- **By Accident — The Negatives** — 8 mints, 3 sold on Foundation
-- **By Accident - Utility** — 2 mints
-- **Hugo Faz - CryptoArt** — 5 mints
-- **Performance Art - Editions** — 3 mints
-- **Live Performance Acts** — 1 mint
-- **1of1 one-offs** — 1 mint, 1 sold on Foundation
+### Meme Card #30 — hugofaz credited artist
 
-### Original Art Collections (casanua)
-- **Formosa 6529** — 30 mints (FRMSA contract), 20 sold at 1 ETH each + 1 at 3 ETH = 22 ETH total
-- **Live modeling sessions** — 5 mints, 5 sold on Foundation
-- **Portraits by Hugo Faz - Editions** — shared contract with hugofaz
-- **The World Today** — shared contract with hugofaz
-- **The World Today collection** — shared contract with hugofaz
+### Deployed Art Contracts (15 verified)
 
-### Deployed Contracts
-- hugofaz: 13+ contracts (HF1Ed, HF2Ed, HF3Ed, HF4Ed, HFAZ2-4, HF100NS, HFCryptoArtEd, HFCRP, HFTSA, The World Today x2, Portraits, SOMBRA, etc.) — Dec 2022 to Dec 2023
-- casanua: 3 contracts (NUALM, GMNUA x2, Formosa 6529, Live modeling sessions) — Jan and Oct 2023
+**Deployed by hugofaz.eth (13 contracts):**
+| Collection | Symbol | Type | Mints | Sold | Holders |
+|---|---|---|---|---|---|
+| 100 NUDE Shoots (of Hugo) | HF100NS | ERC-721 | 7 | 5 | 4 |
+| 100 NUDE Shoots - Editions | HF100NSEd | ERC-1155 | 4 | 0 | 29 |
+| Portraits | HFAZ2 | ERC-721 | 7 | 6 | 2 |
+| Portraits by Hugo Faz - Editions | HF2Ed | ERC-1155 | 3 | 4 | 26 |
+| The Expanded Body | HFAZ1 | ERC-721 | 4 | 4 | 3 |
+| The Expanded Body - Editions | HF1Ed | ERC-1155 | 2 | 0 | 7 |
+| Hugo Faz - CryptoArt | HFCRP | ERC-721 | 5 | 1 | 1 |
+| Live Performance Acts | HFAZ4 | ERC-721 | 1 | 0 | 1 |
+| Performance Art - Editions | HF4Ed | ERC-1155 | 3 | 7 | 18 |
+| Experimental - Editions | HF3Ed | ERC-1155 | 1 | 0 | 1 |
+| Experimental Imagemaking | HFAZ3 | ERC-721 | 1 | 0 | 1 |
+| The Struggling Artist | HFTSA | ERC-721 | 1 | 0 | 1 |
+| The World Today (unnamed on-chain) | — | ERC-1155 | 10 | 13 | 85 |
 
-### Marketplace Revenue
-- Foundation: 35 bought, 56 sold (mostly own artwork — The World Today, SOMBRA, 100 Nude Shoots, Portraits, Live modeling sessions)
-- SuperRare: 0 bought, 0 sold
-- casanua Foundation sales (Formosa 6529): 22 ETH from 20 sales at 1 ETH + 1 at 3 ETH
-- hugofaz Foundation sales (own art): estimated 15+ ETH from photography series
-- Combined artist revenue from own collections: estimated 37+ ETH
+**Deployed by casanua.eth (2 contracts):**
+| Collection | Symbol | Type | Mints | Sold | Holders |
+|---|---|---|---|---|---|
+| Live modeling sessions | NUALM | ERC-721 | 5 | 5 | 1 |
+| Memberships, Participation, Certificates | GMNUA | ERC-1155 | 4 | 0 | 35 |
+
+### Foundation Marketplace Activity
+
+**Sold (56 total):**
+- Own art: 39 sales
+  - The World Today x10 (Aug 2022–Mar 2023)
+  - SOMBRA x7 (Jan–Apr 2023)
+  - 100 Nude Shoots of Hugo x6
+  - Live modeling sessions x5
+  - Portraits x4
+  - By Accident — The Negatives x3
+  - The Expanded Body x2
+  - 100 NUDE Shoots (of Hugo) x1
+  - 1of1 one-offs x1
+- Collector flips: 17 sales
+  - Foundation x8, Bruce Gilden x1, SOULTREES by Louis Iruela x1, ABLUTION x1, Closer Together x1, Dance Mementos x1, Fleas x1, Krampus x1, B Editions x1, "the only gm you'll ever need" x1
+
+**Bought (35 total):**
+- Own art buybacks: 13 (SOMBRA x5, Portraits x3, The Expanded Body x2, 100 Nude Shoots x2, 100 NUDE Shoots x1)
+- Other artists collected: 22 (Foundation x4, plus 18 unique photography/digital art collections including Eerie Polaroids, [reverie in bloom], Content of My Heart, Digital Fantasies, Wonderland, ICE SHACK, Projected Dreams, Fantasy Creeps, Les Enfants de la Balle, and more)
+
+### Photography Practice
+Hugofaz is a photography-focused artist working in series:
+- **The World Today** — ongoing photography series (85 holders, his most distributed collection)
+- **100 Nude Shoots of Hugo** — self-portrait nude photography (ERC-721 originals + ERC-1155 editions)
+- **Portraits** — portrait photography (7 mints, 6 sold, editions with 26 holders)
+- **SOMBRA** — photography series (bought back 5 of 7 sold — actively managing secondary market)
+- **The Expanded Body** — body/performance photography (4 sold, editions with 7 holders)
+- **By Accident — The Negatives** — experimental photography (3 sold on Foundation)
+- **Live modeling sessions** — life model photography (5 mints, all 5 sold)
+- **Performance Art / Live Performance Acts** — performance documentation
+- **Hugo Faz - CryptoArt** — crypto-themed photographic works
+
+### Casa NUA — São Paulo, Brazil
+- casanua operates as an ORGANIZATION profile — a physical gallery space in São Paulo
+- **Domínio PúbliCC0** — 6529 gallery operated by Casa NUA
+- **PEBBLES at Domínio PúbliCC0** MS win was an IRL exhibition of the Pebbles generative art collection (by ZeBlocks/Arsonic and Cheaterflum) — curated by Casa NUA
+- **Memberships, Participation, Certificates** (GMNUA) — 35 holders, community participation tokens
+- **6529 Memes at the Boys' Club** was created at Casa NUA with Patê
 
 ## Collector Activity
 
@@ -114,9 +146,10 @@
 10. By Accident — The Negatives — 6 flips (own artwork)
 
 ### Foundation
-- Bought: 35 NFTs (SOMBRA, Portraits, The Expanded Body, 100 Nude Shoots, various photography)
-- Sold: 56 NFTs (The World Today x10, Foundation x8, SOMBRA x7, 100 Nude Shoots x6, Live modeling x5, Portraits x4, By Accident x3, The Expanded Body x2)
-- Note: Foundation buys include both own artwork buybacks and collecting other photographers' work
+- Bought: 35 (13 own-art buybacks + 22 other artists' work)
+- Sold: 56 (39 own art + 17 collector flips)
+- Active Foundation user as both artist (selling own photography) and collector (buying photography by others)
+- SOMBRA buyback pattern: sold 7, bought back 5 — actively managing secondary market for own work
 
 ### SuperRare
 - SuperRare: 0 bought, 0 sold
@@ -141,7 +174,7 @@
 ### Photography Collecting
 - August Sander 10K collection: 5 held
 - Amazonia — Sebastiao Salgado: 2 held
-- Bruce Gilden: A Little Bit of Everything: 1 held
+- Bruce Gilden: A Little Bit of Everything: 1 held (also flipped on Foundation)
 - Camera Person NFT: 7 held
 - CAMERA PERSON Community Photography: 4 held
 - Camera Person: The Lost Ones: 2 held
@@ -149,26 +182,28 @@
 - Various photography edition collections (James Andrew Editions, John Phillips Monthly, Maria Fynsk Norup, Wim Van Cappellen, etc.)
 
 ## On-Chain Notes
-- Both wallets active since 2021, multi-year on-chain presence
-- 16 deployed contracts for hugofaz, 3+ for casanua — prolific artist
+- hugofaz.eth is the primary art deployment wallet (13 contracts, all Foundation sales)
+- casanua.eth deploys community/gallery contracts (Live modeling sessions, Memberships)
 - ETH transfers between hugofaz and casanua confirm linked ownership
 - No wash trading or suspicious patterns detected
 - Zero SuperRare exposure
-- High Foundation engagement — both as artist (selling own photography) and collector (buying other photographers)
-- Formosa 6529 (casanua's MS-winning collection) generated 22 ETH in sales at 1 ETH per token
+- High Foundation engagement — dual role as artist and collector
+- SOMBRA buyback pattern (sold 7, bought back 5) shows active secondary market management
+- The World Today is the most distributed collection (85 holders)
 - The Memes flipping (205 flips) shows active participation in 6529 meme economy
 - 1,046 cross-wallet transfers indicate active internal management across 6 wallets
-- WETH payments verified for Seaport sales (multiple sales paid in WETH, confirmed and converted to ETH equivalent)
+- WETH payments verified for Seaport sales
 
 ## Review Date
 2026-07-15
 
 ## Notes
 - hugofaz operates both as individual artist and through casanua organization
-- 5 combined Main Stage wins (2 hugofaz + 3 casanua) — among the most decorated 6529 artists
-- Photography-focused practice (nude studies, portraits, "The World Today" series, performance art)
-- casanua's "PEBBLES at Domínio PúbliCC0" MS win references the Pebbles generative collection by @zeeblocks/@arsonic
+- 5 combined Main Stage wins — among the most decorated 6529 artists
+- Photography-focused practice spanning nude studies, portraits, performance art, experimental imagemaking
+- Casa NUA is a physical gallery in São Paulo — Domínio PúbliCC0 brings CC0 generative art IRL
+- PEBBLES MS win was a curation of @arsonic/@cheaterflum's Pebbles collection at Casa NUA
+- 6529 Memes at the Boys' Club was a collaborative video made at Casa NUA with Patê
 - Serious photography collector — owns Salgado, Sander, Gilden prints alongside own work
-- The Memes main contract (0x33fd42...) is their most-held and most-flipped collection — core 6529 ecosystem participant
-- 6529 Gradient #96 purchase at 16.529 ETH is their largest single purchase — significant ecosystem commitment
-- WETH payment verification applied to all sales (pitfall #52) — multiple Seaport sales confirmed paid in WETH
+- The Memes main contract is their most-held and most-flipped collection — core 6529 ecosystem participant
+- 6529 Gradient #96 purchase at 16.529 ETH is their largest single purchase
