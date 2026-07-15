@@ -105,7 +105,8 @@ Example: Pebbles (collection 1) = ze-blocks.eth, 1000 supply, CC0, zeblocks.com
 Profile wave drops can be fetched via `GET /waves/{profile_wave_id}/drops` to see what the artist has posted on their own wave.
 
 ## Known Marketplace Contract Addresses
-- Foundation v1 proxy: 0xcda72070e454bb84c756f75bb72993fbe416b69b (AdminUpgradeabilityProxy, Jan 2021)
+- Foundation NFT transfer proxy: 0xcda72070e455bb31c7690a170224ce43623d0b6f (NFT transfers in/out — discovered empirically 2026-07-15, see pitfall #55)
+- Foundation v1 admin proxy: 0xcda72070e454bb84c756f75bb72993fbe416b69b (AdminUpgradeabilityProxy, Jan 2021)
 - Foundation v2: 0x3B3ee1931dc30F20fFa2dF07F88F93C1B0b94FC0
 - Manifold ERC1155: 0x44e94034afce2dd3cd5eb62528f239686fc8f162
 - Manifold ERC721: 0x7581871e1c11f85ec7f02382632b8574fad11b22
@@ -307,3 +308,77 @@ Blockscout v2 token-transfers response has different field paths than expected:
 - From/to addresses: `from.hash` / `to.hash` (nested in address objects)
 - Value: `total.value` for ERC-1155 quantities
 Using wrong field names results in empty contract/token_id strings and zero held NFTs.
+
+### 55. Foundation has multiple contract addresses — discover marketplace activity empirically (2026-07-15)
+Foundation operates through multiple contracts: the NFT transfer proxy (`0xcda72070e455bb31c7690a170224ce43623d0b6f`) is DIFFERENT from the payment/admin proxy listed in the known addresses section (`0xcda72070e454bb84c756f75bb72993fbe416b69b`). They share the `0xcda72070e45` prefix but diverge. If you hardcode only one Foundation address, you'll miss NFT transfers handled by the other.
+
+**Fix**: After fetching all NFT transfers, empirically discover marketplace activity by counting the most frequent external `from`/`to` addresses. The top external senders are usually marketplaces (Foundation, OpenSea, Seaport) or known counterparties. Match these against the known addresses list, and if a top address isn't in the list but appears frequently, investigate it — it may be a marketplace contract variant.
+
+Example: hugofaz initially showed 0 Foundation transfers because the script used garbled Foundation addresses. Empirical discovery found `0xcda72070e455bb31c7690a170224ce43623d0b6f` with 35 incoming NFT transfers — the actual Foundation NFT proxy.
+
+**Updated Foundation addresses**:
+- Foundation NFT transfer proxy: `0xcda72070e455bb31c7690a170224ce43623d0b6f`
+- Foundation v1 admin proxy: `0xcda72070e454bb84c756f75bb72993fbe416b69b`
+- Foundation v2: `0x3B3ee1931dc30F20fFa2dF07F88F93C1B0b94FC0`
+All three should be checked when counting Foundation buys/sells.
+
+### 56. Previous assessments may be understated due to pagination bug (2026-07-15)
+Pitfall #53 (Blockscout v2 pagination) means ALL assessments run before 2026-07-15 that used the Blockscout v2 API likely fetched only 50 transfers per wallet instead of the full history. hugofaz went from 270 → 3,559 transfers (13x increase). Other assessments (blocknoob, deeze, madacollects, giopetto, etc.) may similarly undercount transfers, holdings, collections, and mints. Re-running these assessments with the fixed pagination will produce significantly different numbers. Prioritize re-running assessments for profiles with known high activity (high TDH, many wallets).
+
+### 57. Artist creation section is mandatory — don't skip it for collector metrics (2026-07-15, CRITICAL)
+The first hugofaz re-assessment had full collector metrics (3,559 transfers, top buys/sales, Biggest L, etc.) but ZERO artist creation content — no deployed contracts, no MS win descriptions, no Foundation sales breakdown by own-art vs collector-flips, no practice narrative. RD caught this: "You didn't include any of his artist creations."
+
+Every assessment of a confirmed artist MUST include an **Artist Work** section BEFORE the Collector Activity section, containing:
+
+1. **MS wins with descriptions**: Fetch each drop via `GET /drops/{id}`. Extract `title`, `metadata` (description field), `raters_count`, `rating`, `winning_context.place`, `winning_context.decision_time`. Include the full artist description text — it reveals medium, collaboration, and intent.
+2. **Deployed contracts table**: For each contract minted from 0x0, check `GET /v2/addresses/{contract}` for `creator_address_hash` — only include contracts where the creator is one of the profile's wallets. Report: collection name, symbol, type (ERC-721/ERC-1155), mints, sold, holders. Group by deploying wallet.
+3. **Foundation sales breakdown**: Separate into (a) own-art sales, (b) collector flips (other artists' work), (c) own-art buybacks. Match Foundation transfer collection names against deployed contract names to classify.
+4. **Practice narrative**: Describe the artist's medium, themes, and series. Group collections into series (e.g., "photography-focused: nudes, portraits, performance art"). Note collaborative works and gallery/organization profiles.
+5. **Casa NUA / gallery context**: If the artist operates a physical gallery or organization profile (ORGANIZATION classification), describe it — location, exhibitions, community role.
+
+### 58. Blockscout v2 contract-creations endpoint returns 400 (2026-07-15)
+`GET /v2/addresses/{addr}/contract-creations` returns HTTP 400. To find contracts deployed by a wallet, use the alternative approach:
+1. Collect all unique contracts where the wallet minted from 0x0 (from token-transfers data)
+2. For each contract, query `GET /v2/addresses/{contract}` and check `creator_address_hash`
+3. If `creator_address_hash` matches one of the profile's wallets → it's their own deployed contract
+
+This is slower but reliable. Batch with 0.15s delays to avoid rate limiting.
+
+### 59. Art sales revenue must include ETH values, not just mint/hold counts (2026-07-15, CRITICAL)
+RD caught the hugofaz assessment having contract tables with mints/sold/holders columns but NO revenue figures: "You didn't include any of the sales volume or top sales for any of those contracts." Every Artist Work section MUST include:
+
+1. **Art Sales Revenue subsection** with total ETH figure
+2. **Per-collection revenue** with ETH totals and number of paid sales
+3. **Top individual art sales** ranked by ETH price, with collection name, token ID, price, date, and buyer/method
+4. **Seaport sales**: ETH value is in the tx `value` field directly (method=`fulfillBasicOrder_efficient_6GL6yc` or `fulfillAvailableAdvancedOrders`)
+5. **Foundation sales**: NFT transfer txs show 0 ETH — revenue comes as WETH from buyer wallets or Foundation auction payouts (see pitfall #60)
+
+### 60. Foundation escrow pattern — NFT transfer txs show 0 ETH (2026-07-15)
+Foundation sales use a proxy escrow mechanism that splits the NFT transfer from the payment:
+- The artist's NFT transfer tx (method=`safeTransferFrom` or `createReserveAuctionV2`) shows **0 ETH** in tx value
+- Payment comes separately as **incoming WETH** from the buyer's wallet or from Foundation auction payout contracts
+- Multiple auction payouts can arrive on the same day from different buyer addresses (e.g., casanua received 9 WETH transfers on Mar 31, 2023 from 9 different addresses — Live modeling sessions auction)
+
+**How to verify Foundation art revenue:**
+1. Fetch all incoming WETH transfers to the wallet (Blockscout `/addresses/{addr}/token-transfers?token={WETH}`)
+2. Exclude WETH from `0x0000...0000` (that's ETH wrapping, not a sale)
+3. Exclude WETH from own wallets (cross-wallet transfers, not sales)
+4. For each remaining incoming WETH transfer, note the `from` address — this is the buyer
+5. Cross-reference with Foundation NFT transfers (to/from `0xcda72070e455bb31`) to match sale timing
+6. Sum all external WETH incoming = approximate Foundation art revenue
+
+**Note**: Some incoming WETH may be collector flip proceeds (selling other artists' work bought on Foundation), not own-art revenue. Cross-reference with deployed contract names to classify.
+
+### 61. Blockscout rate limiting on sequential tx lookups (2026-07-15)
+Fetching `/transactions/{tx_hash}` for 30+ transfers in rapid succession triggers HTTP 429 (Too Many Requests). This happens when verifying Seaport sale prices or checking tx methods. Mitigation:
+- Use **2-second delays** between tx lookup calls
+- On 429, wait 30-60 seconds and retry
+- Batch contract address lookups (`/addresses/{contract}`) at 0.15-0.3s delays (these are lighter)
+- For large wallets (100+ outgoing transfers), consider running as a background process with `notify_on_complete=True` to avoid blocking the conversation
+
+### 62. Blockscout v2 internal-txs endpoint unreliable (2026-07-15)
+`GET /v2/addresses/{addr}/internal-txs` returns 0 items for some wallets despite confirmed internal transactions existing (verified via Etherscan). This affects Seaport payment verification. If the internal-txs endpoint returns empty:
+1. Check WETH token transfers instead (Seaport often pays in WETH — pitfall #52)
+2. Check the tx-level internal-txs endpoint: `GET /v2/transactions/{tx_hash}/internal-txs` (this sometimes works when the wallet-level endpoint doesn't)
+3. Check incoming ETH in regular txs as a fallback (some sales pay directly)
+4. For Seaport sales specifically, the tx `value` field often contains the ETH amount directly (method=`fulfillBasicOrder_*`)
