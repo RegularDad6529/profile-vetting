@@ -287,3 +287,23 @@ A mint that cost 0.007 ETH is a PAID mint, not a free mint. Free mint = 0 ETH co
 
 ### 52. Seaport can pay in WETH, not just ETH — check WETH token transfers (2026-07-13)
 Seaport 1.6 (0x00000000000000ADc04C56Bf30aC9D3c0aAF14dC) and Seaport 1.5 (0x0000000000000068F116a894984e2DB1123eB395) can pay sellers in WETH (ERC-20 token) instead of raw ETH. WETH payments show up as ERC-20 token transfers, NOT as ETH internal transactions. If a sale goes through Seaport but no ETH internal tx is found, check for WETH (contract 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2) token transfers to the seller's wallet in the same block. The seller may also unwrap WETH to ETH via the WETH contract (0xc02aaa39...) in a subsequent tx — look for internal txs FROM the WETH contract. Without checking WETH, sale proceeds are understated and Biggest L is overstated.
+
+### 53. Blockscout v2 pagination uses next_page_params dict, NOT cursor (2026-07-15, CRITICAL)
+Blockscout v2 API `/addresses/{addr}/token-transfers` returns `next_page_params` as a dict with keys like `index` and `block_number`, NOT a `cursor` string. If you try `next_page_params.get("cursor")` you get None and stop after page 1, fetching only 50 transfers. This caused hugofaz assessment to show 270 transfers instead of 3,559. Correct approach: pass the entire `next_page_params` dict as URL query params using `urllib.parse.urlencode(page_params)`. Also applies to `/addresses/{addr}/transactions` endpoint.
+
+Example fix:
+```python
+page_params = data.get("next_page_params")  # dict like {"index": 88, "block_number": 24833916}
+if page_params:
+    url += "?" + urllib.parse.urlencode(page_params)
+```
+
+### 54. Blockscout v2 token fields: address_hash and total.token_id (2026-07-15)
+Blockscout v2 token-transfers response has different field paths than expected:
+- Contract address: `token.address_hash` (NOT `token.address`)
+- Token ID: `total.token_id` (NOT `token.id`)
+- Token name: `token.name`
+- Token type: `token_type` at top level (NOT `token.type`)
+- From/to addresses: `from.hash` / `to.hash` (nested in address objects)
+- Value: `total.value` for ERC-1155 quantities
+Using wrong field names results in empty contract/token_id strings and zero held NFTs.
