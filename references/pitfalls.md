@@ -382,3 +382,57 @@ Fetching `/transactions/{tx_hash}` for 30+ transfers in rapid succession trigger
 2. Check the tx-level internal-txs endpoint: `GET /v2/transactions/{tx_hash}/internal-txs` (this sometimes works when the wallet-level endpoint doesn't)
 3. Check incoming ETH in regular txs as a fallback (some sales pay directly)
 4. For Seaport sales specifically, the tx `value` field often contains the ETH amount directly (method=`fulfillBasicOrder_*`)
+
+### 63. Keep artist and collector sections COMBINED in one file (2026-07-15)
+RD confirmed: artist and collector reviews should be in a single combined assessment file, NOT split into separate artist-facing and collector documents. The collector side (trading patterns, holdings, ecosystem engagement) is evidence of authenticity — splitting them loses that context. "It helps to determine if they are real." The combined file should have `## Artist Work` followed by `## Collector Activity` sections. (Note: pitfall #35 about clean/feedback versions still applies — the shareable version for artists should still strip technical details, but the internal assessment stays combined.)
+
+### 64. safeTransferFrom = direct transfer, not marketplace sale (2026-07-15)
+When checking NFT outgoing transfers, the tx method reveals the sale mechanism:
+- `safeTransferFrom` — direct transfer (gift, OTC, or Foundation escrow deposit). Payment is NOT in this tx.
+- `fulfillBasicOrder_efficient_6GL6yc` / `fulfillAvailableAdvancedOrders` — Seaport sale. ETH value is in the tx `value` field.
+- `createReserveAuctionV2` — Foundation auction listing (not a sale yet)
+- `batchListFromCollectionV2` — Foundation batch listing (not a sale yet)
+- `upsertListing` / `upsertListingV2` / `setBuyPrice` — listing/price setting (not a sale)
+- `fulfillAdvancedOrder` — Seaport sale (may pay in WETH)
+
+For `safeTransferFrom` transfers, check for incoming WETH/ETH within ±48h to determine if it was an OTC sale or a gift. If no payment found, classify as transfer/gift.
+
+### 65. Blockscout v2 /transactions/{hash} can return 400 for valid tx hashes (2026-07-15)
+The Blockscout v2 transaction detail endpoint sometimes returns HTTP 400 Bad Request for valid, confirmed tx hashes. This is different from 429 rate limiting. The 400 appears intermittent — retrying after a delay sometimes works. If persistent, alternative approaches:
+- Use the tx-level internal-txs endpoint (may work when the tx detail endpoint doesn't)
+- Use the tx-level token-transfers endpoint
+- Check if the tx hash is complete (66 chars including 0x prefix) — truncated hashes will always 400
+
+### 67. Shared/factory contract mints ≠ own deployed contracts (2026-07-15, CRITICAL)
+Jpearlking was assessed as having "5 deployed contracts" — WRONG. Only 2 were directly deployed (Lumière, unnamed ERC-1155). The other 3 (Safe Haven, Rare, Rare II, TL Universal Deployers) were created by OTHER addresses. Jpearlking minted ON those contracts but did NOT deploy them. The old assessment confused "minted tokens from 0x0 on this contract" with "deployed this contract."
+
+**Fix**: For every contract where the wallet minted from 0x0, check `GET /v2/addresses/{contract}` and verify `creator_address_hash` matches one of the profile's wallets. Only contracts where the creator IS the profile wallet count as "deployed." All others are shared/factory contracts — the wallet is a minter/user, not the deployer.
+
+This is related to pitfall #28 (free mint farming ≠ artist output) but different: #28 is about minting from many public contracts as a collector. This is about incorrectly claiming shared contracts as own deployments in the artist output section. Also check for factory/proxy patterns — Transient Labs Universal Deployer creates contracts where the factory is the on-chain creator, not the artist's wallet.
+
+### 68. Known exchange hot wallet addresses — exclude from sales (2026-07-15)
+When categorizing incoming ETH, these addresses are exchange hot wallets (withdrawals, NOT sales):
+- `0x28C6c06298d514Db089934071355E5743bf21d60` — Binance 14
+- `0x21a31Ee1afC51d94C2eFcCAa2092aD1028285549` — Binance 15
+- `0xDFd5293D8e347dFe59E90eFd55b2956a1343963d` — Binance 8
+- `0x4976A4A02f38326660D17bf34b431dC6e2eb2327` — Coinbase
+- `0x9696f59E4d72E237BE84fFD425DCaD154Bf96976` — Coinbase 2
+
+ETH from these addresses to the wallet = exchange withdrawals (user withdrawing their own funds from an exchange). Always exclude from sales revenue. The old Jpearlking assessment correctly identified 0.29 ETH of exchange withdrawals but the new automated script initially counted them as direct sales.
+
+### 69. OpenSea gross (tx value) vs net (internal tx) — don't double-count (2026-07-15)
+OpenSea/Seaport sale prices appear in TWO places:
+1. **Gross**: The tx `value` field contains the full sale price (what the buyer paid)
+2. **Net**: The internal tx from the marketplace contract contains the seller's proceeds (gross minus marketplace fee)
+
+OpenSea's standard fee is 12.5% — verified: 0.0600 ETH gross → 0.0525 ETH net (87.5% = 1 - 12.5%). When reconciling sales:
+- Use NET (internal tx) figures for revenue reporting — this is what the artist actually received
+- Do NOT add both gross and net — they're the same sale
+- If you find a tx with `value=0.06` on 2022-07-18 AND an internal tx of `0.0525` on the same date, that's ONE sale, not two
+- The gross/net split also helps verify legitimacy — if gross × 0.875 ≈ net, it's a standard OpenSea sale
+
+### 66. Double-check date math — don't misstate timeframes (2026-07-15)
+When reporting wallet age or activity duration, always calculate the difference between the first tx date and today's date carefully. A wallet first active in July 2025 is ~1 year old as of July 2026, not "2 weeks old." RD caught this error on the babla99 assessment: said "2 weeks ago" for July 31, 2025, when it was actually a year ago. Before writing any timeframe statement, mentally verify: "2025-07-31 to 2026-07-15 = ~1 year." Wrong timeframes change the entire read of a profile — a 1-year-old dormant wallet is very different from a 2-week-old fresh wallet.
+
+### 70. Seaport purchases: NFT transfer `from` shows seller's wallet, not marketplace (2026-07-15)
+When buying on Seaport, the NFT transfer `from` field shows the SELLER's wallet address, not the Seaport marketplace contract. You cannot identify a Seaport purchase by checking if the `from` address is a marketplace contract. Instead, identify purchases by checking the tx method (`fulfillBasicOrder_*` or `fulfillAdvancedOrder`) or by matching ETH/WETH outgoing in the same block. This is the inverse of pitfall #47 (sales show marketplace as source via internal tx) — purchases show the peer, not the marketplace.
