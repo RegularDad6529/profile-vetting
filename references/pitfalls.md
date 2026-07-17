@@ -436,3 +436,75 @@ When reporting wallet age or activity duration, always calculate the difference 
 
 ### 70. Seaport purchases: NFT transfer `from` shows seller's wallet, not marketplace (2026-07-15)
 When buying on Seaport, the NFT transfer `from` field shows the SELLER's wallet address, not the Seaport marketplace contract. You cannot identify a Seaport purchase by checking if the `from` address is a marketplace contract. Instead, identify purchases by checking the tx method (`fulfillBasicOrder_*` or `fulfillAdvancedOrder`) or by matching ETH/WETH outgoing in the same block. This is the inverse of pitfall #47 (sales show marketplace as source via internal tx) — purchases show the peer, not the marketplace.
+
+### 71. Seeking Nomination wave drops API — v2 returns {drops: [...]}, not {items: [...]} (2026-07-16)
+The v2 wave drops endpoint `GET /v2/waves/{wave_id}/drops?limit=200` returns a dict with key `drops` (NOT `items` or `data`). The drops array contains full drop objects with `author.handle`, `content`, `media`, `drop_type`, `serial_no`, `created_at` (milliseconds since epoch). Pagination uses `next_page_params` dict (same as pitfall #53). The v1 endpoint `GET /waves/{wave_id}/drops` returns an empty dict `{}` — always use v2. The Seeking Nomination wave ID is `0ecb95d0-d8f2-48e8-8137-bfa71ee8593c`. Note: the wave does NOT appear in the `GET /waves` list (only 20 waves returned) but is accessible directly by ID. The `author_handle` query param on `GET /drops` is still broken (pitfall #31) — scan wave drops locally to find specific authors.
+
+### 72. Blockscout v2 token-transfers endpoint — use bare URL, no filter param (2026-07-16)
+`GET /v2/addresses/{addr}/token-transfers?filter=to%7Cfrom` returns HTTP 422 Unprocessable Entity. The `filter` query param is not supported. Use the bare URL `GET /v2/addresses/{addr}/token-transfers` (no filter) — it returns both incoming and outgoing transfers. The `?type=ERC-721` filter on `/tokens` endpoint works but `filter` on `/token-transfers` does not.
+
+### 75. Solana activity claims are unverifiable from this environment (2026-07-16)
+Some nominees claim Solana activity (e.g., kiramoto: "been at it in sol since 2022"). This environment has no Solana on-chain data access — no Solana RPC, no Solscan/Helius API key, no Solana FM. State this gap explicitly in the assessment: "Claims Solana background since [year] — cannot verify from this environment." Do NOT classify as suspicious based on unverifiable claims alone, but do note the gap as a limitation of the assessment. If the profile has minimal ETH activity AND claims Solana activity, the Solana claim becomes the critical verification path — flag it for RD to check manually or provide a Solana wallet address.
+
+### 75b. Minimal profiles with deployed contracts but no market traction (2026-07-16)
+kiramoto pattern: Level 17, TDH 0, 2 deployed ERC-721 contracts with only 7 total NFTs minted, ~0.38 ETH art revenue (2 Foundation sales in 2023), zero collector activity (no purchases, no 6529 ecosystem holdings), 2.5-year ETH dormancy, primary wallet created 2 days before nomination, no social links, no ENS, 0 rep on nomination post. Classification: SUSPICIOUS. Key signals: TDH 0 (no 6529 network engagement), wallet created just before nomination (timing suggests nomination-driven setup), long dormancy after initial contract deployment (no ongoing artist practice), zero collector activity (not embedded in NFT community). When a profile has deployed contracts but everything else is minimal/dormant, the contracts alone don't establish legitimacy — assess whether the art practice is ongoing or was a one-time event.
+
+### 74. Nifty Gateway NiftyBuilderInstance contracts — custom metadata, tokenURI reverts (2026-07-16)
+Nifty Gateway contracts (named `NiftyBuilderInstance`) have a custom metadata architecture that differs from standard ERC-721:
+
+- **`tokenURI(uint256)` reverts** even for existing tokens — `_baseURI` is set to a bare IPFS hash (no `ipfs://` prefix, no `/{tokenId}` suffix), so the constructed URI is invalid and the call may revert
+- **`tokenIPFSHash(uint256)` is the working metadata function** — returns the IPFS hash of the artwork image directly (NOT a metadata JSON with `attributes` array). The hash points to a raw image file (GIF, PNG, etc.)
+- **`tokenName(uint256)` may return empty string** even when the token exists
+- **Token ID encoding**: `tokenId = niftyType * topLevelMultiplier + edition * midLevelMultiplier + build`. Read `topLevelMultiplier()` and `midLevelMultiplier()` to decode. Example: type=1, edition=1, build=1 → tokenId = 171000100001
+- **Finding valid token IDs**: Use `ownerOf(uint256)` (selector `0x6352211e`) with encoded IDs to find which tokens exist. `tokenName`/`tokenIPFSHash` both call `_exists()` internally, so they revert if the token doesn't exist — but `ownerOf` is the reliable existence check
+- **`_typeCount()`** returns the number of NFT types in the contract. Open editions typically have 1 type
+- **No traits/attributes on-chain**: The contract has no `attributes` mapping. All tokens in an open edition share the same IPFS hash. There is no metadata JSON to fetch — the IPFS hash IS the image
+- **Getting the ABI**: Use Blockscout v1 API `GET /api?module=contract&action=getsourcecode&address={addr}` — returns full ABI and source code. The source shows the custom function implementations
+- **Custom event signature**: Nifty Gateway uses event `0xdeaa91b6...` instead of standard `Transfer(address,address,uint256)` for minting. Standard `eth_getLogs` with Transfer topic returns 0 results. Use the custom event topic or check `ownerOf` to find minted tokens
+
+Example: XCOPY "MAX PAIN AND FRENS OPEN EDITION" (0xd1169e5349d1cB9941F3DCbA135C8A4b9eACFDDE) — all tokens share IPFS hash `QmTcTzTPgCyvF933oeFvB4GkPgaXtF6dKuQgvg32qqLYGF` (4.5MB GIF). No traits exist anywhere.
+
+### 76. Nifty Gateway burn/redeem companion contracts (2026-07-16)
+Nifty Gateway open editions (NiftyBuilderInstance) may have a SEPARATE companion "burns" contract where holders burn original tokens to redeem different characters. Example: XCOPY "MAX PAIN AND FRENS OPEN EDITION" (0xd1169e...) has a companion "MAX PAIN AND FRENS OPEN EDITION BURNS BY XCOPY" (0x3696cd00618a08c8793208385ae526677c889d4a) with 3 types (21+34+33 tokens), each a different character GIF. The burn contract uses the same NiftyBuilderInstance pattern with `_typeCount > 1`.
+
+**How to discover burn/redeem contracts:**
+1. Search SearXNG (localhost:8888) for `"{contract name keywords}" burn redeem XCOPY` — verse.works and outposts.io often index them
+2. Check the Nifty Gateway deployer bot (0x7f58c5daf1612d0ac114752cd8fe61a51332e1a8) — it calls `setNiftyIPFSHash` on ALL Nifty Gateway contracts. Fetch its txlist, extract unique `to` addresses, and call `name()` on each to find companion contracts with "BURNS" in the name
+3. verse.works pages show token names even when on-chain `tokenName` is empty — search `site:verse.works "{contract address}"` or fetch verse.works artwork pages directly. The page title and og:title contain the character name (e.g., "GUZZLER #10/21 by XCOPY")
+4. xcopy.art lists artist series — useful for XCOPY-specific burns (DAMAGE CONTROL series uses Manifold contracts, NOT Nifty Gateway)
+
+**Key insight for assessments:** When an artist deployed a Nifty Gateway open edition, check for burn/redeem mechanics. The burns contract reveals additional character names and artwork that aren't visible on the original contract. The on-chain `tokenName` is typically empty — names come from off-chain sources (verse.works, Nifty Gateway UI, artist website).
+
+**XCOPY DAMAGE CONTROL series** (separate from Nifty Gateway burns, uses Manifold contracts, 2023-24): 10 characters — OBLIVION (450), BANG_BANG (249), SIDEWAYZ (388), CHURN (151), CRAWLER (257), XOMBO (150), SH_MASH_MA (99), BOT_ROT (84), REIGN (63), HEAVY (44). Burns ended Dec 31, 2024. Source: xcopy.art/series/damage-control
+
+### 77. Use SearXNG (localhost:8888) for contract and collection research (2026-07-16)
+The self-hosted SearXNG instance at `http://localhost:8888/search?q={query}&format=json` is a powerful tool for NFT contract research when on-chain data is insufficient. Use cases:
+- Finding companion/burn contracts by searching contract name + "burn" + "redeem"
+- Finding token/character names that are empty on-chain (verse.works, CoinMarketCap, outposts.io index them)
+- Finding artist series pages (e.g., xcopy.art/series/damage-control)
+- Discovering contract addresses from marketplace pages (verse.works HTML contains full 0x addresses in the page source — fetch and regex `0x[a-fA-F0-9]{40}`)
+
+Note: SearXNG returns mixed quality results — filter by checking if the result content contains relevant keywords. URL-encode spaces in queries. The `format=json` param is required for API access.
+
+### 73. ENS subgraph may return 403 Forbidden (2026-07-16)
+The ENS subgraph at `api.thegraph.com/subgraphs/name/ensdomains/ens` may return HTTP 403 Forbidden for queries that worked previously. This blocks both owner-based lookups (`{ domains(where: {owner: \"...\"}) }`) and name-based lookups (`{ domains(where: {labelName: \"...\"}) }`). When the subgraph is 403, fall back to: (a) Blockscout address endpoint `GET /v2/addresses/{addr}` which returns `ens_domain_name` if set, (b) check if the handle matches an ENS name pattern and skip ENS discovery. Note that Blockscout only returns the primary ENS name, not subdomains.
+
+### 78. xcopy.art Next.js RSC flight data extraction (2026-07-16, UPDATED)
+xcopy.art is a Next.js App Router site. Work pages (`/works/{slug}`) contain contract addresses, edition counts, and media filenames in RSC flight data — not in standard HTML or JSON. The MAIN page (`https://xcopy.art/`) flight data contains ALL works — extract `/works/` paths from the `<script>` flight data chunks, not from raw HTML links (which only show ~28). The `/explore` page is incomplete. See `references/xcopy-art-extraction.md` for full extraction code and the complete 153-works catalog. Useful for cross-referencing XCOPY contract addresses, finding companion burns contracts, and verifying edition counts. Some works (damage-control, laws, saint) return 404 as individual pages but appear in the main page flight data.
+```python
+chunks = re.findall(r'self\.__next_f\.push\(\[1,"(.*?)"\]\)', html, re.DOTALL)
+raw = ''.join(chunks)
+contracts = re.findall(r'contractAddress[^,]*([0-9a-fA-Fx]{42})', raw)
+editions = re.findall(r'numberInEdition[^,]*"?(\d+)"?', raw)
+media = re.findall(r'cdn\.xcopy\.art/media/original_images/([^"\\]+)', raw)
+```
+153 works listed as of July 2026 — fetch the MAIN page (`https://xcopy.art/`) flight data, NOT `/explore` (which only shows ~28). Full extraction patterns and complete 153-works catalog in `references/xcopy-art-extraction.md`. Useful for cross-referencing XCOPY contract addresses, finding companion burns contracts, and verifying edition counts. Some works (damage-control, laws, saint) return 404 — the DAMAGE CONTROL series page doesn't exist but the series info is on the main page.
+
+### 79. Nifty Gateway deployer bot — discover all contracts by same platform (2026-07-16)
+The Nifty Gateway deployer bot (`0x7f58c5daf1612d0ac114752cd8fe61a51332e1a8`) calls `setNiftyIPFSHash` on every Nifty Gateway contract. To find companion/burn contracts for a given collection:
+1. Fetch the deployer's txlist: `GET /api?module=account&action=txlist&address=0x7f58c5...&page=1&offset=200&sort=asc`
+2. Extract all unique `to` addresses (these are Nifty Gateway contracts)
+3. Call `name()` (selector `0x06fdde03`) on each via eth_call to get the contract name
+4. Filter for related names (e.g., "BURNS" for burn contracts, "XCOPY" for XCOPY collections)
+
+The deployer has 129+ unique contracts across multiple pages. This technique found the "MAX PAIN AND FRENS OPEN EDITION BURNS BY XCOPY" companion contract (0x3696...) by scanning all Nifty Gateway contracts for "XCOPY" in the name.
