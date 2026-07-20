@@ -124,7 +124,7 @@ Profile wave drops can be fetched via `GET /waves/{profile_wave_id}/drops` to se
 
 ## Key 6529 API Endpoints
 - `GET /identities/{handle}` — profile with artist fields, wallets, rep
-- `GET /identities/{handle}/activity` — 365-day daily drop count array (pitfall #31)
+- `GET /identities/{handle}/activity` — 365-day daily drop count array (pitfall #31, pitfall #80). **MANDATORY for profile age verification** — `created_at` resets on deconsolidation, this is the only reliable timeline.
 - `GET /delegations/{wallet}` — all delegations for a wallet (PATH param, not query — pitfall #33b). Use cases: 1=primary, 2=sub-delegation, 3=consolidation, 998=custom
 - `GET /drops/{id}` — individual drop details (title, author, ratings, winning_context)
 - `GET /drops?drop_type=PREVOTE` — prevote card drops
@@ -500,6 +500,39 @@ media = re.findall(r'cdn\.xcopy\.art/media/original_images/([^"\\]+)', raw)
 ```
 153 works listed as of July 2026 — fetch the MAIN page (`https://xcopy.art/`) flight data, NOT `/explore` (which only shows ~28). Full extraction patterns and complete 153-works catalog in `references/xcopy-art-extraction.md`. Useful for cross-referencing XCOPY contract addresses, finding companion burns contracts, and verifying edition counts. Some works (damage-control, laws, saint) return 404 — the DAMAGE CONTROL series page doesn't exist but the series info is on the main page.
 
+### 80. Deconsolidation resets created_at — use activity API for real timeline (2026-07-19, CRITICAL)
+`created_at` on `/identities/{handle}` and `/profiles/{handle}` reflects the LAST deconsolidation event, NOT the profile's original creation date. When a user removes a wallet from their consolidation group, the identity gets a new `consolidation_key` (just their own address, no dash) and `created_at` updates to the split date. This makes long-time users look brand new.
+
+**Consolidation mechanics** (from `6529seize-backend/src/consolidation-tools.ts`):
+- `consolidation_key` = all wallet addresses sorted alphabetically, joined with `-`. Single wallet = no dash. Two wallets = `0xaaa-0xbbb`. Three = `0xaaa-0xbbb-0xccc`.
+- Deconsolidation = REVOKE event in the consolidations table. The consolidation_key changes and `created_at` resets.
+- After deconsolidation, the drops API (`?author_handle=`) may only return drops from the new consolidation_key — older drops posted under the consolidated identity may not appear.
+
+**How to find the real timeline**: Use `GET /identities/{id}/activity` — returns `{last_date, date_samples}` with a 365-element array of daily drop counts. Non-zero entries = active days. This data survives deconsolidation and shows the true activity history. A profile with `created_at: today` but activity samples going back 8 months was deconsolidated, not created today.
+
+**Red flag pattern**: Profile shows `created_at: today` but has high rep (50K+) and level (19+). These numbers were earned over months/years — the profile is NOT new. Always cross-check `created_at` against the activity API before stating when a profile was created.
+
+Example: @parisa showed `created_at: 2026-07-19` (today) but activity samples showed ~240 days of activity. Her drops API only returned 10 drops from today (deconsolidation truncated the history), but her rep of 51K and level 19 were earned over 8 months. RD caught: "The wallet and profile is older today, you fell for another portal."
+
+### 81. Foundation marketplace internal ETH = bid escrow, NOT confirmed sales (2026-07-19)
+The Foundation marketplace contract (`0xcda72070e455bb31c7690a170224ce43623d0b6f`) routes ETH through internal transactions. These internal txs can be:
+- **Bid escrow releases** — ETH returned to a bidder who was outbid (NOT a sale)
+- **Auction payouts** — ETH sent to the seller after a successful auction (IS a sale)
+- **Failed auction refunds** — ETH returned when an auction doesn't complete (NOT a sale)
+
+You CANNOT distinguish these without checking the individual transaction context (the tx method, the NFT involved, and the auction state). Do NOT claim "artist sold X ETH of art" based on summing internal txs from Foundation's marketplace contract. This is the same error class as pitfall #9 (Foundation bid escrow inflates gross flows) but applies to the Alchemy `alchemy_getAssetTransfers` internal category specifically.
+
+**Correct approach**: Match Foundation internal ETH transfers to specific NFT transfers (token mints from `0x3b3ee1931dc30c1957379fac9aba94d1c48a5405` or NFT transfers to/from the Foundation proxy) in the same block. Only count ETH paired with an NFT transfer TO a buyer as a sale. Unmatched internal ETH = bid escrow/refund.
+
+RD corrected: "I think you made the mistake you made before with Foundations bid mechanics."
+
+### 82. Exchange intermediary wallets — don't assume peer-to-peer (2026-07-19)
+When tracing funding trails, large exchanges (Binance, Coinbase) operate MANY hot/cold wallets that shuffle ETH between each other. A funding chain like `0x28c6c062... (Binance 14) → 0x56eddb7a... → target wallet` may look like the intermediary is a peer, but `0x56eddb7a...` is likely ALSO a Binance wallet. 50,000 ETH transfers between wallets are exchange internal operations, not peer-to-peer transfers.
+
+**How to verify**: Check if the intermediary wallet has patterns consistent with an exchange hot wallet: (a) very high ETH throughput (thousands of ETH), (b) funded by a known exchange address, (c) sends to many different wallets (exchange withdrawal pattern). If the intermediary was funded by Binance and sends to many wallets, treat the entire chain as exchange-funded.
+
+RD corrected on @parisa: "I suspect the intermediary wallet with 50,000 eth is also a Binance wallet."
+
 ### 79. Nifty Gateway deployer bot — discover all contracts by same platform (2026-07-16)
 The Nifty Gateway deployer bot (`0x7f58c5daf1612d0ac114752cd8fe61a51332e1a8`) calls `setNiftyIPFSHash` on every Nifty Gateway contract. To find companion/burn contracts for a given collection:
 1. Fetch the deployer's txlist: `GET /api?module=account&action=txlist&address=0x7f58c5...&page=1&offset=200&sort=asc`
@@ -508,3 +541,32 @@ The Nifty Gateway deployer bot (`0x7f58c5daf1612d0ac114752cd8fe61a51332e1a8`) ca
 4. Filter for related names (e.g., "BURNS" for burn contracts, "XCOPY" for XCOPY collections)
 
 The deployer has 129+ unique contracts across multiple pages. This technique found the "MAX PAIN AND FRENS OPEN EDITION BURNS BY XCOPY" companion contract (0x3696...) by scanning all Nifty Gateway contracts for "XCOPY" in the name.
+
+### 83. Iran geo-block cluster — shared Binance sub-distribution wallet (2026-07-19)
+When two 6529 members are funded by the SAME Binance sub-distribution wallet, they're in the same Iranian community withdrawal cluster. `0x8d56f551b44a6da6072a9608d63d664ce67681a5` funds both @sariture AND @sepicaso — both have zero OpenSea, both are established 6529 members. This shared-wallet signal is STRONGER than individual Persian name signals. When you identify one Iran geo-block member, trace their funding wallet and check if it funds other 6529 members — this discovers the cluster.
+
+### 84. Deconsolidation can wipe the ENTIRE activity chart (2026-07-19)
+Pitfall #80 noted that deconsolidation resets `created_at`. Worse: the `/identities/{id}/activity` endpoint can return ALL ZEROS (every day = 0) after a recent deconsolidation — not just a reset timestamp. When this happens, rep + level are the ONLY reliable indicators of prior history. L23 + 91K rep + zero activity = deconsolidated, NOT new. Don't conclude "new account" from zero activity alone. Cross-check with rep/level and counterparty relationships.
+
+### 85. Drops API author_handle filter is broken (2026-07-19, CONFIRMED)
+`GET /api/drops?author_handle=X` returns drops from OTHER people on the profile wave, not the author's own drops. V2 drops API (`/api/v2/drops?author_handle=X`) returns HTTP 400. Use `parent_drop_id` (profile wave ID) instead via `GET /api/drops?parent_drop_id={id}`, but that still returns ALL drops on the wave — filter by author handle client-side. Related to pitfall #31 (same issue, confirmed again during sepicaso investigation).
+
+### 86. ENS display field shortcut in identity API (2026-07-19)
+The `GET /identities/by-wallet/{wallet}` response includes a `display` field that may contain the ENS name (e.g., "sepicaso.eth") even when the on-chain ENS reverse registrar (0x084b1c3c...) returns no result. Check this field FIRST as a shortcut before doing on-chain ENS lookups. The `wallets` array also has per-wallet `display` fields with ENS names.
+
+### 87. Profile bio is NOT in the identity endpoint (2026-07-19)
+The identity endpoint (`GET /identities/by-wallet/{wallet}`) does not include bio, x_link, or other social fields. These are in the nested `profile` object of `GET /profiles/{handle}` (response key `profile.bio`, `profile.x_link`). Use BOTH endpoints for a complete picture: identity endpoint for rep/level/wallets/ENS, profiles endpoint for bio/socials/classification.
+
+### 88. Gnosis Safe is cold storage — not an OpenSea-blocked wallet (2026-07-19)
+A Gnosis Safe (SafeProxy) is a multi-sig cold storage vault. You don't log into OpenSea with it. Lack of OpenSea activity on a Safe does NOT mean it's blocked. When assessing OpenSea blocking, only count wallets the user would actually log in with (EOAs, smart contract wallets like EIP-7702 delegated EOAs). Don't count Gnosis Safes as evidence of blocking. RD corrected: "If it's a gnosis safe, it wouldn't be connected to anything as a way to keep the assets safe, I wouldn't assume that it's blocked by OS."
+
+### 89. alchemy_getAssetTransfers misses OpenSea atomic matches — scan tx receipts (2026-07-20, CRITICAL)
+The `alchemy_getAssetTransfers` API only tracks direct token transfers to/from addresses. OpenSea Wyvern/Seaport uses atomic matching — the NFT goes directly from seller to buyer (not through the exchange contract), and ETH goes directly from buyer to seller. These transfers do NOT appear when querying `fromAddress`/`toAddress` = exchange address. To find OpenSea sales, you MUST scan transaction receipts: get all tx hashes from the wallet, fetch each receipt via `eth_getTransactionReceipt`, and check if `receipt.to` equals an exchange address.
+- Wyvern: `0x7f268357A8c2552623316e2562D90e642bB538E5`
+- Seaport 1.1: `0x0000000000000068F116a894984e2DB1123eB395`
+- Seaport 1.4: `0x00000000000000AdC04C56bF30aC9D3C0aAF14Dc`
+- The old address `0x7f268357a8d2554763e816641b1f5b947a1c2d8a` is WRONG — don't use it.
+Case: mintface.eth appeared to have 0 OpenSea interactions via getAssetTransfers, but receipt scanning revealed 279 Wyvern transactions. RD caught: "He has sold on OpenSea."
+
+### 90. Don't assume "not geo-blocked" without a region signal (2026-07-20)
+A non-Persian ENS and non-Persian art themes do NOT rule out geo-blocking. OFAC sanctions cover Cuba, North Korea, Syria, Crimea, Donetsk/Luhansk — not just Iran. When a wallet has zero OpenSea interactions and uses Foundation exclusively, geo-blocking is possible regardless of cultural signals. Without a clear regional indicator, classify as "block reason uncertain" rather than "not geo-blocked." Over-claiming "not geo-blocked" was wrong for mintface.eth — he's Australian and was an active OpenSea seller (279 Wyvern txs) whose activity was invisible to getAssetTransfers (see pitfall #89). The correct assessment requires ruling out the API blind spot FIRST before concluding geo-block.
