@@ -579,3 +579,36 @@ Alchemy's `getNFTs` labels transfers with collection names that can be wrong. "O
 
 ### 93. Deconsolidated profiles retain drops from before deconsolidation (2026-07-20)
 Pitfall #80 noted that deconsolidation resets `created_at` and pitfall #84 noted the activity chart can zero out. Additionally: deconsolidated profiles may RETAIN drops posted while consolidated. The L5 @MintFace profile had 10 drops (in Intrepid Chat/Real Time Votes) that stayed after deconsolidation from @mintface.eth (L62). The deconsolidated wallet had 0 nonce — it was never used independently, only as a consolidation target. When assessing a low-level profile with drops but a zero-nonce wallet, check whether it was recently deconsolidated from a higher-level profile (same person, different identity). Don't treat it as a separate active user.
+
+### 111. Bulk-rep API ADDS, not overwrites (2026-07-31, CRITICAL CORRECTION)
+Previous pitfalls and documentation claimed the bulk-rep proxy token OVERWRITES existing rep. This is WRONG. Verified 2026-07-31: Mistershot had 29K MemesNominee rep, was given 10K via bulk-rep, and ended up with 39K (29K + 10K = additive, not overwrite). The give_nomination_rep.py script should send just the `amount` to add, NOT `current_rep + amount`. Sending `current_rep + amount` would DOUBLE the existing rep.
+
+### 112. Proxy credit is limited — large rep gifts may fail (2026-07-31)
+The bulk-rep proxy token has a finite credit budget. On 2026-07-07, 300K rep was distributed (10K × 30 artists). By 2026-07-31, only ~10K credit remained. Requests for 21K, 20K, and even 5K all failed with "Not enough proxy credit left to rate." Only 10K succeeded. When the proxy credit is low, give smaller amounts or wait for credit replenishment. Test with progressively smaller amounts if large ones fail.
+
+### 113. No wave notifications on Seeking Nomination (2026-07-31, RD DIRECTIVE)
+Do NOT post notification replies to the Seeking Nomination wave when giving rep. RD directive: "skip any posts in seeking nomination wave so that we don't spam it." The rep-giving script (`give_nomination_rep.py`) does not post wave replies. The cron agent reports results to Telegram only.
+
+### 114. Rep categories endpoint is paginated (2026-07-31)
+The correct endpoint for MemesNominee rep is `GET /profiles/{pid}/rep/categories?page=N` — returns `{data: [...], next: bool}`. Each category object has `category`, `total_rep`, `contributor_count`, `top_contributors`. The old endpoint `/profiles/{pid}/rep` returns 404. To find RD's contribution, scan `top_contributors` array for `profile.handle == "regulardad"`. Multiple pages may be needed — loop until `next` is false.
+
+### 115. Data archiving for vetting reports (2026-07-31)
+The data collection script saves two types of archive:
+- **Dated reports**: `seen/vetting_reports/vetting_{date}.json` — full candidate report from each run
+- **Per-profile**: `seen/vetting_reports/profiles/{handle}.json` — latest data per artist, overwritten each scan
+
+This allows answering "what do we have on @artist?" without re-running the full script. To retrieve: `read_file(seen/vetting_reports/profiles/{handle}.json)`. The per-profile file includes `last_scanned` date and full on-chain + API data.
+
+### 116. Unconsolidated minting wallet false negative (2026-08-01, CRITICAL)
+An artist's 6529 primary wallet may show ZERO mints, sales, or deployed contracts on-chain because they mint from a **different, unconsolidated wallet**. The vetting script will classify them as "collector, not artist" — wrong.
+
+**Case:** @Bombadil has Meme Card #231 and posts artwork in their profile wave, but their 6529 primary wallet (`0x01e2fe`) showed zero on-chain activity. Their minting wallet is separate and not consolidated.
+
+**Fix (3 layers):**
+1. **Script**: Fetch `/identities/by-wallet/{address}` and check `artist_of_prevote_cards` — if non-empty, the candidate IS an established artist regardless of on-chain data on their 6529 primary wallet.
+2. **Cron prompt**: Instruct the agent to check `artist_of_prevote_cards` FIRST before on-chain analysis. Also read ALL drop content (not just first 500 chars of first drop) for external art links — artists often post SuperRare/Foundation links in their profile wave.
+3. **Skill**: This pitfall.
+
+**Key insight**: The 6529 API has `artist_of_prevote_cards`, `active_main_stage_submission_ids`, `winner_main_stage_drop_ids`, and `is_wave_creator` fields that detect artists regardless of which wallet they mint from. These fields come from the 6529 backend and are the authoritative source. On-chain analysis of the 6529 primary wallet is supplementary.
+
+**However**: These fields only catch 6529 Meme cards and Main Stage submissions. An artist with ONLY external platform work (SuperRare, Foundation) and no 6529 card will still show empty arrays. In that case, the agent must read the drop content for external art links and verify them by fetching the linked pages.
