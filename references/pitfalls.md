@@ -599,7 +599,61 @@ The data collection script saves two types of archive:
 
 This allows answering "what do we have on @artist?" without re-running the full script. To retrieve: `read_file(seen/vetting_reports/profiles/{handle}.json)`. The per-profile file includes `last_scanned` date and full on-chain + API data.
 
-### 116. Unconsolidated minting wallet false negative (2026-08-01, CRITICAL)
+### 116a. run_assessment.py has broken imports — 4 functions missing (2026-08-02, CRITICAL)
+The `run_assessment.py` script imports `get_cic_statements`, `get_nft_history_multichain`, `get_artwork_from_minted_collections`, and `analyze_artwork` from `seeking_nomination_vetting.py`, but these functions did not exist in the module. Subagents during the 2026-08-02 vetting session implemented them to fix the issue. If the script fails with ImportError, check whether these functions are present in the vetting library and implement them if missing. The functions should:
+- `get_cic_statements(handle, token)` — fetch CIC statements from the identities CIC endpoint
+- `get_nft_history_multichain(wallet, alchemy_key)` — fetch NFT transfers across ETH/Base/Polygon/Arbitrum/Optimism/Zora using Alchemy
+- `get_artwork_from_minted_collections(wallet, token)` — extract artwork metadata from minted collections
+- `analyze_artwork(artwork_list)` — basic artwork analysis (AI detection, perceptual hash)
+
+### 116b. Alchemy getAssetTransfers returns identical cached results for different wallets (2026-08-02)
+When querying `alchemy_getAssetTransfers` with `category: ["internal"]` for different wallet addresses in rapid succession, the API returned IDENTICAL transfer data (same block numbers, same ETH amounts, same from addresses) for completely different wallets. This was observed for Soliiiart (0x3afa...) and Superno (0xed61...) — both returned the same 6.0 ETH from 0x109c4f2ccc82c4... at blocks 0xc3bf/0xc3c5/0xc477. The blocks are very early (2015 era), which is impossible for wallets first active in 2021/2022. This is a caching bug in Alchemy's API.
+
+**Fix**: When internal transfer results look suspicious (very early blocks, identical data across different wallets), fall back to Blockscout v1 API (`txlistinternal`) or Etherscan v2 for verification. Do NOT trust Alchemy internal transfer data without cross-checking against another source.
+
+### 116c. Subagent vetting timeouts — use 300s timeout and prioritize key data (2026-08-02)
+When delegating artist vetting to subagents via `delegate_task`, the 600s default timeout is insufficient for artists with complex on-chain history. 3 out of 10 subagents timed out during the 2026-08-02 session (HELLia x2, Soliiiart x2, Superno x1). Root causes: Blockscout API 429 rate limiting, Alchemy API timeouts, and subagents reading large skill files (pitfalls.md is 118KB).
+
+**Best practices for subagent vetting**:
+1. Set terminal timeout to 300s (not 600s) for the assessment script
+2. Instruct subagents to prioritize: profile data → artist fields → wallet history → sales → social links. Skip deep Blockscout queries if slow.
+3. If the script fails, gather data manually via 6529 API calls
+4. For subagents that time out, the parent agent can complete the assessment manually using the partial data collected
+5. Run max 3 subagents in parallel — more causes API rate limiting across all of them
+
+### 117. Alchemy getNFTs may be fully unsupported on some API keys (2026-08-02)
+`alchemy_getNFTs` returned "Unsupported method: alchemy_getNFTs" (error code -32600) on the current Alchemy key during the 2026-08-02 session. This is different from pitfall #91 (ERC1155 unreliability) — the method itself was rejected entirely, for both ERC721 and ERC1155.
+
+**Fix**: Use `alchemy_getAssetTransfers` with `category: ["erc721", "erc1155"]` and `{from: wallet}` / `{to: wallet}` to enumerate NFT transfers. Group by `rawContract.address` to get collection-level holdings. For current holdings, compute net: (transfers TO wallet) - (transfers FROM wallet) per contract. This is less precise than getNFTs (no token-level metadata) but works reliably.
+
+**Also**: `alchemy_getContractMetadata` also returned HTTP 400 for all contracts tested. Use `alchemy_getNFTMetadata` (for individual tokens) or on-chain `name()`/`symbol()` calls via `eth_call` instead.
+
+### 118. Maybe's Dive Bar has no pagination — only returns ~50 recent drops (2026-08-02)
+`GET /v2/waves/b38288e6-ca9d-45ce-8323-3dc5e094f04e/drops?limit=50` returns ~50 drops all from today, with `next_page_params: null` (no pagination). This means the Dive Bar is only useful for discovering TODAY's active community members, not historical posters. For historical candidate discovery, use the Seeking Nomination wave with `limit=200` instead.
+
+### 119. Pre-filter SN wave candidates to exclude collectors (2026-08-02)
+Not everyone who posts on the Seeking Nomination wave is an artist seeking nomination. Collectors and community members post there too. Before vetting, check each candidate's identity fields:
+
+**SKIP if ALL true**: `active_main_stage_submission_ids` is empty AND `winner_main_stage_drop_ids` is empty AND `artist_of_prevote_cards` is empty AND rep categories show zero MemesNominee rep. They're a collector/community member.
+
+**Case**: Piano (L38, TDH 198,112, 1 SN post) — high TDH and level suggested importance, but zero MS submissions, zero artist fields, rep only from "memes ftw" and "AOS" community categories. Wasted a subagent timeout (600s) before being identified as a collector.
+
+### 120. Same person, multiple 6529 profiles — wallet funding as the link (2026-08-02, CONFIRMED CASE)
+Related to pitfall #22. farnaz_dashti (L0, Rep 11, wallet 0xdbcc500d...) and FarnazDashti (L0, Rep 20, wallet funded by farnaz_dashti) are the same person. farnaz_dashti's wallet funded FarnazDashti's wallet. Both vetted separately in the same session before the link was discovered.
+
+**Detection**: When two handles share a name fragment (farnaz_dashti / FarnazDashti), check if one wallet funded the other via `alchemy_getAssetTransfers` with `{from: wallet_A, to: wallet_B, category: ["external"]}`. If ETH transfers exist between them, they're likely the same person. Report both profiles in the same assessment.
+
+### 121. Subagent vetting — 600s timeout insufficient for high-tx wallets (2026-08-02, UPDATED)
+Pitfall #116c noted 600s subagent timeouts. This session confirmed: Piano (2,280 txs) and JMVPHOTOGRAPHY (4,128 txs) both timed out at 600s. The run_assessment.py script's multichain NFT history fetch is the bottleneck.
+
+**Updated best practices**:
+1. Pre-filter candidates (pitfall #119) to avoid wasting subagents on collectors
+2. For wallets with >2000 txs, skip the assessment script entirely and gather data manually via targeted API calls
+3. Run assessment script with `timeout 300` — if it doesn't finish, fall back to manual
+4. Max 3 subagents in parallel — more causes Blockscout 429 rate limiting across all
+5. Parent agent can complete timed-out assessments faster than subagents by making targeted calls instead of running the full script
+
+### 122. Artist may mint from unconsolidated wallet — check artist_of_prevote_cards FIRST (2026-08-02, CRITICAL)
 An artist's 6529 primary wallet may show ZERO mints, sales, or deployed contracts on-chain because they mint from a **different, unconsolidated wallet**. The vetting script will classify them as "collector, not artist" — wrong.
 
 **Case:** @Bombadil has Meme Card #231 and posts artwork in their profile wave, but their 6529 primary wallet (`0x01e2fe`) showed zero on-chain activity. Their minting wallet is separate and not consolidated.
