@@ -671,3 +671,20 @@ An artist's 6529 primary wallet may show ZERO mints, sales, or deployed contract
 The automated vetting script (`seeking_nomination_vetting.py`) reports "sales" by counting ETH transfers to the primary wallet without checking if the sender is a self-wallet. When an unconsolidated wallet shares an ENS root with a consolidated wallet (e.g., `seizar.eth` 0x421c05b4 → `vault.seizar.eth` 0x0e81a8a4), the script counts these self-transfers as sales. Case: seizar was reported with 14 "sales" / 0.9428 ETH — all were self-transfers between seizar's own wallets.
 
 **Fix**: After the script runs, manually verify any reported sales by checking if the sender wallet's ENS name shares a root with the profile's wallet ENS names (e.g., `X.eth` and `sub.X.eth` are the same person). Query `GET /v2/addresses/{sender}` for the `ens_domain_name` field and compare against all profile wallet ENS names. If they share a root, reclassify as self-transfer, not sale. Related to pitfall #3 (exclude self-transfers) and pitfall #8 (find unconsolidated wallets via ENS), but this is the specific script failure mode where the unconsolidated wallet isn't in the profile's wallet list.
+
+### 124. OpenSea SeaDrop factory contracts return 404 on OpenSea v2 API (2026-08-05)
+SeaDrop is OpenSea's own drop mechanism, but collections created via `ERC721SeaDropCloneFactory` / `ERC1155SeaDropCloneFactory` return HTTP 404 on the OpenSea v2 stats endpoint (`/api/v2/collections/chain/ethereum/{addr}/stats`) and the bare collection endpoint. The NFTs exist on-chain (verifiable via Blockscout token instances and holder counts) but are invisible to the OpenSea API. Do NOT conclude "not on OpenSea" or "zero market traction" from the 404 — these are OpenSea-hosted drops with real sales (SeaDrop primary + Seaport secondary). Use on-chain data (Blockscout token transfers, holder counts, Seaport tx methods) to assess sales and collector base instead.
+
+Case: @Tuskss has 6 collections on SeaDrop (Prix 181 holders, Dynamic Signals 1,046 holders, etc.) — all return 404 on OpenSea API despite being OpenSea products.
+
+### 125. Vetting script inflates ETH revenue with bridge and swap router transfers (2026-08-05, CONFIRMED)
+Related to pitfalls #5 and #68. The automated `seeking_nomination_vetting.py` script counts cross-chain bridge and swap router ETH transfers as sales, in addition to the exchange hot wallets already in pitfall #68. For @Tuskss, the script reported 4.74 ETH but real marketplace revenue was ~1.92 ETH — 2.82 ETH was inflated by non-sale transfers.
+
+**Non-sale inflators to exclude** (beyond pitfall #68 exchange addresses):
+- `spender` / MetaSwap (swap router): 0.518 ETH
+- `MayanSwift` (cross-chain bridge): 0.249 ETH
+- `RelayRouterV3` (gas relay/router): 0.204 ETH
+- `Bridgers` (cross-chain bridge): 0.067 ETH
+- WETH wrap/unwrap (0x0 sender or WETH contract): 0.039 ETH
+
+**Fix**: After the script runs, categorize every incoming ETH transfer by source. Only count ETH from: SeaDrop drop proceeds, Seaport internal txs, marketplace contracts (Foundation, Manifold), and direct EOA payments paired with NFT transfers. Exclude all exchange, bridge, router, and WETH-wrap transfers.
