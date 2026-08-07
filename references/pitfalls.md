@@ -688,3 +688,13 @@ Related to pitfalls #5 and #68. The automated `seeking_nomination_vetting.py` sc
 - WETH wrap/unwrap (0x0 sender or WETH contract): 0.039 ETH
 
 **Fix**: After the script runs, categorize every incoming ETH transfer by source. Only count ETH from: SeaDrop drop proceeds, Seaport internal txs, marketplace contracts (Foundation, Manifold), and direct EOA payments paired with NFT transfers. Exclude all exchange, bridge, router, and WETH-wrap transfers.
+
+### 126. Alchemy getNFTsForOwner totalCount counts ALL contracts, not just filtered contract (2026-08-07, CRITICAL)
+Alchemy's `getNFTsForOwner` API returns a `totalCount` that represents the wallet's total NFTs across ALL contracts, even when `contractAddresses` filter is provided. For the ENTROPY collection editor wallet (0x2c3b3fea), Alchemy reported totalCount=626, but on-chain `balanceOf` for the specific contract returned only 11. The 626 was the wallet's total NFT holdings across all contracts, not just ENTROPY.
+
+**Fix**: Always verify NFT holdings for a specific contract via on-chain `balanceOf(address)` (ERC721) or `balanceOfBatch` (ERC1155). Never trust Alchemy's `totalCount` or `ownedNfts.length` as the count for a specific contract — Alchemy's `contractAddresses` filter does not reliably scope the `totalCount` field. This is distinct from pitfall #91 (ERC1155 unreliability) and #117 (method unsupported) — here the method works but returns misleading aggregate counts.
+
+### 127. OpenSea v2 events API requires API key — no free path to trace secondary market transfers (2026-08-07)
+The OpenSea v2 events endpoint (`/api/v2/events/collection/{slug}`) returns HTTP 401 without an API key, unlike the collection stats endpoint which works without a key. This makes it impossible to trace buyer/seller wallets for secondary market sales without an OpenSea API key. Combined with public RPCs limiting `eth_getLogs` to 50-block ranges (ankr, publicnode require API keys for archive; 1rpc limits to 50 blocks), there is no free path to trace ERC721 Transfer events for a collection's full lifetime (~20,000 blocks).
+
+**Fix**: For collections where secondary market tracing is needed, request an OpenSea API key in advance. Alternatively, use the Alchemy key with `eth_getLogs` in 10-block chunks (Alchemy free tier limit) and paginate through the full block range — slow but functional. For a quick ownership check, scrape the OpenSea activity page HTML for wallet address frequency, but this gives only recent activity, not full history.
