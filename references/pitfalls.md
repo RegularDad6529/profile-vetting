@@ -694,7 +694,96 @@ Alchemy's `getNFTsForOwner` API returns a `totalCount` that represents the walle
 
 **Fix**: Always verify NFT holdings for a specific contract via on-chain `balanceOf(address)` (ERC721) or `balanceOfBatch` (ERC1155). Never trust Alchemy's `totalCount` or `ownedNfts.length` as the count for a specific contract — Alchemy's `contractAddresses` filter does not reliably scope the `totalCount` field. This is distinct from pitfall #91 (ERC1155 unreliability) and #117 (method unsupported) — here the method works but returns misleading aggregate counts.
 
-### 127. OpenSea v2 events API requires API key — no free path to trace secondary market transfers (2026-08-07)
-The OpenSea v2 events endpoint (`/api/v2/events/collection/{slug}`) returns HTTP 401 without an API key, unlike the collection stats endpoint which works without a key. This makes it impossible to trace buyer/seller wallets for secondary market sales without an OpenSea API key. Combined with public RPCs limiting `eth_getLogs` to 50-block ranges (ankr, publicnode require API keys for archive; 1rpc limits to 50 blocks), there is no free path to trace ERC721 Transfer events for a collection's full lifetime (~20,000 blocks).
+### 127. OpenSea v2 events API requires API key — instant key available (2026-08-07, UPDATED)
+The OpenSea v2 events endpoint (`/api/v2/events/collection/{slug}`) returns HTTP 401 without an API key, unlike the collection stats endpoint which works without a key.
 
-**Fix**: For collections where secondary market tracing is needed, request an OpenSea API key in advance. Alternatively, use the Alchemy key with `eth_getLogs` in 10-block chunks (Alchemy free tier limit) and paginate through the full block range — slow but functional. For a quick ownership check, scrape the OpenSea activity page HTML for wallet address frequency, but this gives only recent activity, not full history.
+**Instant API key**: POST to `https://api.opensea.io/api/v2/auth/keys` with no authentication required. Returns a free-tier API key valid for 7 days, rate-limited to 600 requests/hour. Save the key to `.opensea_key` in the profile directory. This eliminates the need to request keys in advance — create one on-demand when secondary market tracing is needed.
+
+```python
+import requests, json
+resp = requests.post('https://api.opensea.io/api/v2/auth/keys', 
+    headers={'Content-Type': 'application/json'})
+key_data = resp.json()
+# key_data contains 'api_key' and 'expires_at'
+```
+
+Alternatively, use the Alchemy key with `eth_getLogs` in 10-block chunks (Alchemy free tier limit) and paginate through the full block range — slow but functional. For a quick ownership check, scrape the OpenSea activity page HTML for wallet address frequency, but this gives only recent activity, not full history.
+
+### 128. Vet identity pitfalls apply to ALL wallet analysis, not just formal vetting (2026-08-07, CRITICAL)
+The identity verification pitfalls (#1 check 6529 API first, #8 find unconsolidated wallets, #22 multiple profiles, #33b delegated wallets) apply to ANY wallet identity analysis — not just formal Seeking Nomination vetting sessions. When investigating a collection or analyzing on-chain data and needing to identify who owns a wallet, the SAME verification chain applies:
+1. Check `GET /identities/by-wallet/{address}` on the 6529 API FIRST
+2. Check the `display` field for ENS name
+3. Check delegations via `GET /delegations/{wallet}`
+4. Check ENS subgraph for related wallets
+5. Verify wallet links with ETH transfer evidence (pitfall #22 WARNING about false certainty)
+
+**Case**: During ENTROPY collection analysis, a wallet holding 76 tokens was found and claimed as "mendezmendez's wallet" without checking the 6529 API. The 6529 API showed the wallet was `art-vault-mendez.eth` (L7, PSEUDONYM, no handle) — linked to but separate from the primary `mendezmendez.eth` (L23) wallet. RD corrected: "Are you using the profile vetting pitfalls to prevent these errors?" The pitfalls WERE in the skill but were not consulted because the task wasn't framed as "vetting."
+
+**Fix**: Before claiming any wallet belongs to a specific person, run the 6529 API identity lookup. The `display` field gives the ENS name. Cross-reference with the person's known wallets. Never assume wallet ownership from holding patterns alone.
+
+### 129. OpenSea events API can return massive datasets — stream to disk (2026-08-07)
+The OpenSea v2 events API paginates at 100 events per page with cursor-based pagination. For actively traded collections, the total event count can be enormous — the ENTROPY collection (1,820 tokens, 4 days old) had 358,000+ sale events across 3,580+ pages. Holding all events in memory caused the script to consume 1.6GB RAM and timeout at 600s.
+
+**Fix**: Stream events to a JSONL file as they're fetched. Keep only aggregate statistics (per-wallet buy/sell counts, price arrays) in memory. Write the raw events to `/tmp/{collection}_sales_stream.jsonl` for later re-analysis without re-fetching. Use `flush=True` on print statements for progress monitoring. Run as a background process with `notify_on_complete=True` for collections with >10,000 expected events.
+
+**Pagination pattern**:
+```python
+next_cursor = None
+while True:
+    params = {'event_type': 'sale', 'limit': 100}
+    if next_cursor:
+        params['cursor'] = next_cursor
+    resp = requests.get(url, params=params, headers=hdrs)
+    events = resp.json().get('asset_events', [])
+    for e in events:
+        out_file.write(json.dumps(record) + '\n')
+    next_cursor = resp.json().get('next')
+    if not next_cursor:
+        break
+    time.sleep(0.15)  # Rate limit: 600/hr
+```
+
+### 131. OpenSea events API pagination CYCLES — dedup or waste hours (2026-08-07, CRITICAL)
+The OpenSea v2 events API cursor-based pagination can CYCLE — returning the same events in an infinite loop. For the ENTROPY collection, the API returned 360,000+ "sale events" across 3,600+ pages, but there were only ~100 unique sales. The cursor never returns `null` — it loops back to the beginning. This wasted over 30 minutes of compute and 1.6GB RAM chasing duplicates.
+
+**Fix**: ALWAYS dedup by a composite key `(token_id, timestamp, buyer, seller, transaction_hash)` as you paginate. Stop when a page returns 0 new unique records. Track `seen_keys` as a set and compare `new_count` per page — if `new_count == 0`, break immediately. Example detection: page 2 returned 100 events but 0 were new → duplicate cycle confirmed → stop.
+
+```python
+seen_keys = set()
+while True:
+    # ... fetch page ...
+    new_count = 0
+    for e in events:
+        key = (token_id, timestamp, buyer, seller, tx_hash)
+        if key in seen_keys:
+            continue
+        seen_keys.add(key)
+        # process new record
+        new_count += 1
+    if new_count == 0:
+        break  # duplicate cycle
+```
+
+**The `events/collection/{slug}` endpoint cursor is fundamentally broken — it returns the SAME cursor every time, cycling the same 100 events.** The `occurred_before`/`occurred_after` timestamp filters also don't help — they return the same 100 most recent events regardless of the timestamp range.
+
+**Working workaround — `events/accounts/{wallet}` endpoint**: This endpoint has a DIFFERENT cursor that actually paginates forward. To collect ALL sales for a collection:
+1. Get the initial 100 sales from `events/collection/{slug}` (page 1)
+2. Extract all unique buyer/seller wallet addresses
+3. For each wallet, call `GET /api/v2/events/accounts/{wallet}?event_type=sale&collection={slug}` with cursor pagination — this endpoint's cursor works correctly and returns different pages
+4. Dedup across all wallets by composite key
+5. For each unique sale, fetch the NFT metadata to get the "Revealed" trait (only ~50% of token IDs will have trait data via the NFT endpoint — the rest need individual `GET /api/v2/chain/ethereum/contract/{addr}/nfts/{tokenId}` calls)
+
+This approach found 7,662 unique sales for ENTROPY vs the 100 returned by the broken collection cursor.
+
+### 132. OpenSea events API field names and price parsing (2026-08-07)
+The OpenSea v2 events API uses different field names than expected:
+- **Buyer/seller**: `s.get('buyer', '')` and `s.get('seller', '')` — NOT `to_address`/`from_address` (those return `'?'` or empty strings)
+- **Token ID**: `nft.get('identifier', '?')` — NOT `token_id`
+- **Revealed trait**: Check `nft.get('traits', [])` for `trait_type == 'Revealed'`, value `'Yes'` or `'No'`
+- **Price**: `payment = s.get('payment', {})`, then `price = int(payment['quantity']) / (10 ** int(payment.get('decimals', 18)))`. The `quantity` field is a wei string (e.g., `'63000000000000000'` = 0.063 ETH). Payment may be in ETH (`token_address` = `0x000...000`) or WETH (`token_address` = `0xC02aaA39...`).
+- **Event keys**: `['event_type', 'event_timestamp', 'transaction', 'order_hash', 'protocol_address', 'chain', 'payment', 'closing_date', 'seller', 'buyer', 'quantity', 'nft']`
+
+### 130. OpenSea NFT holdings count is stale vs on-chain balanceOf (2026-08-07)
+The OpenSea v2 API `GET /api/v2/chain/ethereum/account/{wallet}/nfts?collection={slug}` returns NFTs the wallet has HELD, not necessarily currently holds. For the ENTROPY vault wallet (0x35a9), OpenSea returned 980 NFTs but on-chain `balanceOf` returned 76. The OpenSea API caches historical holdings and does not reflect transfers/sales that occurred off OpenSea or after indexing lag.
+
+**Fix**: Always verify current holdings via on-chain `balanceOf(address)` (ERC-721) or `balanceOfBatch` (ERC-1155) using an RPC call. Never trust OpenSea's NFT count as the current holdings count — it is an upper bound that includes sold/transferred tokens. Related to pitfall #126 (Alchemy totalCount) but distinct — here the API returns stale holdings data, not aggregate counts.
