@@ -806,3 +806,17 @@ Pitfall #111 documented that the bulk-rep API ADDS rep, not overwrites. However,
 The `seeking_nomination_vetting.py` script reported address `0xab48082d` as a micro-transaction sale source for BOTH @Loop and @acxlitch (sub-0.001 ETH amounts in Aug 2026). On-chain checks via Blockscout showed this address has zero transactions and zero balance — it's not a real wallet. The address likely appeared due to internal transaction parsing artifacts (trace data producing addresses that don't correspond to actual EOAs or contracts).
 
 **Fix**: When a sale source address appears for multiple unrelated candidates, or when the ETH amounts are suspiciously tiny (sub-0.001 ETH), verify the address exists on-chain via `GET /v2/addresses/{addr}` before treating it as a real counterparty. If the address returns zero transactions/balance, exclude it from the assessment as a parsing artifact. Do NOT use phantom shared addresses as evidence of a connection between candidates.
+
+### 136. SuperRare Sovereign contracts are legitimate SuperRare (2026-08-11, CRITICAL)
+SuperRare operates a "Sovereign" NFT system (`SovereignNFTContractFactory`) where each artist gets personal ERC-721 contracts deployed via SuperRare's factory. These are NOT the SuperRare V1 (0x41A322) or V2 (0xB932a7) contracts from pitfall #7 — they are separate, artist-specific contracts. Sales revenue comes from the "SuperRare Payments" contract, not the V1/V2 marketplace contracts.
+
+**Do NOT dismiss Sovereign contracts as "not SuperRare"** just because transfers don't appear on V1/V2. The artist IS on SuperRare — verify by checking: (a) contract was deployed via `SovereignNFTContractFactory`, (b) revenue comes from a "Payments" contract (not the NFT contract itself), (c) artist posted a superrare.com/{handle} link in their profile wave. This is distinct from the Chonkly SuperRarer knockoff (pitfall #7) — Sovereign is the real SuperRare platform.
+
+Case: @flostitanarum had 3 Sovereign collections (Amerta, LOVE, VITA) with 6.11 ETH revenue from SuperRare Payments — all legitimate SuperRare sales, zero transfers on V1/V2.
+
+### 137. Vetting script can return EMPTY artist fields when API calls fail mid-run (2026-08-11, CRITICAL)
+Related to pitfall #133 (script misattributing another candidate's data) but the OPPOSITE failure mode: the script returns EMPTY arrays for `active_ms_submission_ids`, `winner_ms_drop_ids`, and `is_wave_creator: false` when the 6529 API returns errors (404, expired token, rate limit) during the data collection phase. This makes a real artist look like a non-artist, risking incorrect SUSPICIOUS classification or skipping artist verification.
+
+Case: @flostitanarum's script output showed all artist fields empty (`active_ms_submission_ids: []`, `is_wave_creator: false`), but the live API returned `active_main_stage_submission_ids: ["bf4bba14..."]` and `is_wave_creator: true`. A 404 error during the script run caused partial data collection.
+
+**Fix**: After the script runs, ALWAYS cross-check `active_ms_submission_ids`, `winner_ms_drop_ids`, `is_wave_creator`, and `artist_of_prevote_cards` against the live identity API (`GET /identities/{handle}`) before classification — same fix as pitfall #133, but now covering both directions (script over-reporting AND under-reporting). If the script shows empty but the API shows non-empty, the API is authoritative. Do NOT classify a candidate as "not an artist" based solely on the script's empty artist fields.
