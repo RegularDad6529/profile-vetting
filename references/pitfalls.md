@@ -860,3 +860,25 @@ Related to pitfall #125 but a newly identified bridge contract. The `Ethereum_Sp
 The `analyze_artwork()` function uses the Gemini API for AI-generated art detection and perceptual hashing. During high-volume vetting runs (e.g., multiple candidates in one session), the API returns HTTP 429 (Too Many Requests) and artwork analysis cannot be performed. Case: @hopix assessment (Aug 16) — Gemini API quota exhausted, AI detection could not run. Assessment fell back to manual visual inspection of downloaded images, which is subjective and less reliable.
 
 **Fix**: When Gemini API returns 429, note it explicitly in the assessment ("AI detection: unavailable due to API quota, manual visual inspection used"). Do NOT skip the artwork section entirely — download images and describe them manually (style, medium, consistency, thematic coherence). Batch artwork analysis across candidates with delays (0.5-1s between calls) to avoid hitting the quota. If quota is exhausted, defer artwork analysis to a follow-up run when quota resets. The assessment classification can still be made from on-chain and community signals alone — just flag the artwork section as incomplete.
+
+### 146. 6529 API wave drops offset pagination is broken — returns same results regardless of offset (2026-08-22)
+The 6529 v1 API `GET /api/waves/{id}/drops?limit=100&offset=N` ignores the `offset` parameter and returns the same first 100 drops on every page. Fetching pages with `offset=100`, `offset=200`, etc. produces identical results. Case: Aug 22 vetting run — fetching 5 pages of SN wave drops with increasing offset returned the same 100 drops each time (the script appeared to fetch 500 but actually got 100 unique). The dive bar wave showed the same behavior (300 fetched but only 50 unique).
+
+**Fix**: Do NOT rely on the `offset` parameter for paginating wave drops. The first page (limit=100) may be all you get. To find older drops or all unique authors, use alternative approaches: (a) fetch with `limit=100` only and accept the first 100 drops as the recent window, (b) cross-reference against the assessment wave to identify previously vetted handles, (c) use the identities/activity endpoint for per-profile activity data instead. If you need ALL drops from a wave, there is currently no working pagination — flag this as a limitation.
+
+### 147. NFT self-transfers to own Gnosis Safe vault inflate "sends" count — verify receiver is not artist's vault (2026-08-22)
+Related to pitfall #3 (ETH self-transfers) but a distinct failure mode for NFT transfer analysis. Artists may transfer NFTs to their own Gnosis Safe (multisig vault) for storage, which inflates the "NFT sends" count and can be misread as sales activity. Case: @YoshiroMare — 38 of 41 NFT sends went to 0x6f66b95a, a contract (Gnosis Safe) with an auto-assigned 6529 profile (`id-0x6f66b95a0c...`, L10). Only 3 NFTs went to a different address (Catalog/MintSongs music NFTs, not art sales). The vetting script counted all 41 as "sends" without flagging that 93% were self-transfers to a vault.
+
+**Fix**: When NFT sends count is high but verified sales are zero or very low, check whether the majority of NFT sends go to a single contract address. If that address: (a) is a contract (not an EOA), (b) has an auto-assigned 6529 profile (`id-0x...` handle), (c) receives ETH from the artist's wallet with zero value (gas-only transactions), then it is likely the artist's own vault. Exclude these from the "sends" count when assessing sales activity. The Gnosis Safe pattern: NFTs sent to vault for storage, ETH sent with 0 value (just gas for the multisig tx). Do NOT cite high "NFT sends" as evidence of sales distribution when the receiver is the artist's own vault.
+
+### 148. Rep-giving API format and credit limits — POST /api/ratings with target_wallet_addresses (2026-08-22)
+The correct 6529 API endpoint for giving rep is `POST /api/ratings` with payload: `{"target_wallet_addresses": ["0x..."], "amount_to_add": N, "matter": "REP", "category": "MemesNominee"}`. Key constraints discovered:
+- `target_profile_id` is NOT allowed in the payload (returns 400 "target_profile_id is not allowed")
+- `target_wallet_addresses` (array of hex addresses) is required
+- `amount_to_add` (integer) is required
+- `matter` (string, e.g. "REP") is required
+- `category` (string, e.g. "MemesNominee") is required
+- Rep credit is LIMITED — the bot account (TheManager, L35, 234K rep) could only give 1,000 rep per recipient before hitting "Not enough credit to go through with this bulk rating". Amounts of 2,000+ all failed.
+- The `{"skipped": []}` response indicates success (no wallets skipped).
+
+**Fix**: When giving rep, use the correct payload format above. Start with `amount_to_add: 1000` — larger amounts will likely fail with insufficient credit. The bot can give ~1,000 rep to ~2 recipients per cycle before credit is exhausted. Do NOT attempt 10,000 rep gifts — the credit limit prevents it. If the skill instructions say "give 10K rep", the actual achievable amount is ~1K per recipient. Track credit usage across the session to avoid wasting API calls on amounts that will fail.
