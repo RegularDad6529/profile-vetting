@@ -882,3 +882,10 @@ The correct 6529 API endpoint for giving rep is `POST /api/ratings` with payload
 - The `{"skipped": []}` response indicates success (no wallets skipped).
 
 **Fix**: When giving rep, use the correct payload format above. Start with `amount_to_add: 1000` — larger amounts will likely fail with insufficient credit. The bot can give ~1,000 rep to ~2 recipients per cycle before credit is exhausted. Do NOT attempt 10,000 rep gifts — the credit limit prevents it. If the skill instructions say "give 10K rep", the actual achievable amount is ~1K per recipient. Track credit usage across the session to avoid wasting API calls on amounts that will fail.
+
+### 149. Rep-giving endpoint confusion — three endpoints, only two work (2026-08-24)
+The agent tried `POST /api/profiles/{handle}/rating` to give rep — this endpoint does NOT exist and returns 404 "Cannot POST /api/profiles/{handle}/rating". There are TWO working rep-giving endpoints with different capabilities:
+1. `POST /api/ratings` — direct rating using the caller's own rep. Payload: `{"target_wallet_addresses": ["0x..."], "amount_to_add": N, "matter": "REP", "category": "MemesNominee"}`. Limited to ~1,000 rep per recipient (pitfall #148).
+2. `POST /api/bulk-rep` — proxy token bulk rep using RD's rep budget. Payload: `{"targets": [{"address": "0x...", "category": "MemesNominee", "amount": N}]}`. Requires a proxy token generated via `POST /api/auth/login` with RD's profile_id as `role`. Can give 10,000+ rep per recipient. This is the endpoint used by `give_nomination_rep.py`.
+
+**Fix**: Always use the `give_nomination_rep.py` script which calls `/api/bulk-rep` with a proxy token. Do NOT attempt to call rep endpoints directly with handle-based URLs — the API uses wallet addresses, not handles. The handle-based `/api/profiles/{handle}/rating` endpoint does not exist.
