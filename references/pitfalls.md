@@ -115,6 +115,7 @@ Profile wave drops can be fetched via `GET /waves/{profile_wave_id}/drops` to se
 - Seaport 1.6: 0x00000000000000ADc04C56Bf30aC9D3c0aAF14dC
 - Seaport 1.5: 0x0000000000000068F116a894984e2DB1123eB395
 - Seaport 1.4: 0x00000000000001adF28D0aCDeB0B5b31601b3b0d
+- TLAuctionHouse (Transient Labs auction escrow, NOT a collector — see pitfall #164): 0x6f66b95a0c
 - WETH (Wrapped Ether): 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2
 - OpenSea Wyvern: 0x7be8076f4ea4b96b62c43e4a9c3a3b87e2f7c1f2
 - Chonkly SuperRarer (NOT SuperRare): 0xc360ceca69988e39be18ddb89e69afcc33a3833a
@@ -961,3 +962,20 @@ Gemini API models are deprecated over time and return 404 "model not found" erro
 Pitfall #147 classified address 0x6f66b95a (Gnosis Safe, auto-ID `id-0x6f66b95a0c...`, L10) as an artist's own vault because @YoshiroMare sent 93% of NFTs there. The Sep 02 vetting session found that THREE separate candidates (@debycloud, @mhankumiz, @michelle) ALL send NFTs to 0x6f66b95a. The address holds 64+ unique NFT collections, has 123 counterparties, and 8,410 NFTs. It is a prolific community collector who buys from many Transient.xyz artists — NOT any single artist's personal vault.
 
 **Fix**: When multiple candidates in the same vetting batch send NFTs to the same address, check that address's full transaction history. If it receives NFTs from many different artists (20+ unique senders, 50+ collections), it is a platform-wide collector, not self-transfer. Do NOT flag shared NFT recipients as suspicious when the recipient is a known community collector. However, DO still check whether the recipient sends ETH back to the artist (which would indicate wash trading, see pitfall #161). Update: 0x6f66b95a is classified as CLEAN based on the sariture case analysis.
+
+### 164. 0x6f66b95a is TLAuctionHouse contract, not a collector or vault — correction to #147 and #163 (2026-09-03, CRITICAL)
+Pitfall #147 classified 0x6f66b95a0c as an artist's Gnosis Safe vault. Pitfall #163 corrected that to "platform-wide community collector." Both are WRONG. The Blockscout smart-contracts API returns the contract name as **"TLAuctionHouse"** — it is the Transient Labs auction house marketplace contract, not a personal wallet or collector.
+
+**Correct interpretation**:
+- NFTs sent TO 0x6f66b95a = auction listings (like sending NFTs to Foundation proxy for sale). NOT collector purchases, NOT self-transfers to a vault.
+- ETH sent FROM 0x6f66b95a to artists = auction sale payouts (REAL sales revenue). Count this as marketplace revenue.
+- Treat 0x6f66b95a exactly like Foundation proxy (0xcda72070e455bb31) or Seaport — it's a marketplace escrow contract.
+
+**Fix**: Add 0x6f66b95a0c to the Known Marketplace Contract Addresses section as "TLAuctionHouse (Transient Labs)." When NFTs are sent to this address, classify as "listed for auction" not "sent to collector." When ETH is received from this address, classify as "Transient auction sale revenue." Do NOT flag NFTs sent to TLAuctionHouse as suspicious self-transfers or collector activity. The "8,410 NFTs held" from pitfall #163 are NFTs currently in auction escrow, not a collector's portfolio.
+
+Case: Sep 3 vetting session — Superno received 0.2925 ETH from TLAuctionHouse (3 txs = 3 auction sales), neuralartistry received 0.1462 ETH (2 txs = 2 auction sales). Both correctly identified as Transient marketplace revenue.
+
+### 165. Artists listing SuperRare in CIC/bio with zero on-chain SuperRare activity — brand inflation (2026-09-03)
+Artists may list SuperRare (superrare.com/{handle}) in their CIC statements or social links without having ANY SuperRare v1, v2, or Sovereign contract transfers on-chain. This inflates their apparent marketplace presence. Case: @HELLia lists "superrare.com/hellia" and @Chubbygirl2moon lists "SuperRare" in their CIC, but both have ZERO SuperRare v1 (0x41A322), v2 (0xB932a7), or Sovereign factory transfers. The SuperRare link may be a profile page they created without ever selling, or brand association padding.
+
+**Fix**: When an artist lists SuperRare in their CIC/bio, ALWAYS verify by checking SuperRare v1, v2, AND Sovereign factory contract transfers (pitfall #136). If zero transfers across all three, note in the assessment: "Lists SuperRare but zero on-chain SuperRare activity — profile may exist without sales." Do NOT count SuperRare as a verified marketplace platform for the artist based on a CIC link alone. This is distinct from pitfall #7 (SuperRarer ≠ SuperRare) and pitfall #136 (Sovereign contracts are legitimate) — here the issue is claiming SuperRare presence with NO on-chain evidence at all.
